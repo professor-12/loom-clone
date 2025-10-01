@@ -10,11 +10,10 @@ import { User } from "@/generated/prisma";
 
 export interface JWTPayload {
     sub: string; // user id
-    sid: string; // session id
     email: string;
     roles?: string[];
-    exp: number;
-    iat: number;
+    exp?: number;
+    iat?: number;
 }
 
 export async function signInWithGoogleAction(code: string) {
@@ -41,9 +40,7 @@ export async function signInWithGoogleAction(code: string) {
     const token = issueJwt({
         email: user.email,
         sub: user.id,
-        roles: "",
-        avatarUrl: user.avatarUrl as string,
-        name: user.name,
+        avatar_url: user.avatarUrl,
     });
 
     (await cookies()).set("jwt_token", token, {
@@ -97,7 +94,8 @@ export const getUser = async () => {
 
 export async function signOut() {
     (await cookies()).delete("jwt_token");
-    return { success: true };
+    redirect("/");
+    // return { success: true };
 }
 
 export const auth = async () => {

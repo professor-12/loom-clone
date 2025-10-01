@@ -134,9 +134,13 @@
     --sidebar-ring: oklch(0.556 0 0);
 }
 
+.font-poppins {
+    font-family: var(--poppins);
+}
+
 @layer base {
     * {
-        @apply border-border outline-ring/50;
+        @apply border-border outline-ring/50 font-circular;
     }
     body {
         @apply bg-background text-foreground font-circular;

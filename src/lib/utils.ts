@@ -20,12 +20,13 @@ if (process.env.NODE_ENV == "development") {
     globalThis._prisma = new PrismaClient();
 }
 
-export function issueJwt(user: JWTPayload) {
+export function issueJwt(user: JWTPayload & { avatar_url: string | null }) {
     return jwt.sign(
         {
             sub: user.sub,
             email: user.email,
-        } satisfies JwtPayload,
+            avatar_url: user.avatar_url,
+        } satisfies JwtPayload & { avatar_url: string | null },
         process.env.JWT_SECRET as string,
         { expiresIn: JWT_EXPIRES_IN }
     );

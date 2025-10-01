@@ -18,22 +18,23 @@ datasource db {
 model User {
   id          String      @id @default(uuid())
   email       String      @unique
-  password    String?     // optional if using only OAuth
+  password    String?    
   name        String?
   avatarUrl   String?
   provider    AuthProvider[]
-  videos      Video[]     // videos created by user
+  videos      Video[]   
   comments    Comment[]
   workspaces  WorkspaceMember[]
   createdAt   DateTime    @default(now())
   updatedAt   DateTime    @updatedAt
 
   Integration Integration[]
+  billing Billing? 
 }
 
 model AuthProvider {
   id             String   @id @default(uuid())
-  provider       String   // "google" | "github" | "slack"
+  provider       String   
   providerUserId String
   accessToken    String
   refreshToken   String?
@@ -99,8 +100,8 @@ enum Visibility {
 model VideoShare {
   id        String   @id @default(uuid())
   videoId   String
-  email     String?  // if shared via email
-  userId    String?  // if shared with an existing user
+  email     String?  
+  userId    String? 
   video     Video    @relation(fields: [videoId], references: [id])
   createdAt DateTime @default(now())
 }
@@ -124,4 +125,74 @@ model Integration {
   userId      String
   user        User     @relation(fields: [userId], references: [id])
   createdAt   DateTime @default(now())
+}
+
+
+model Billing {
+  id          String   @id @default(uuid())
+  userId      String   @unique
+  user        User     @relation(fields: [userId], references: [id])
+
+  plan        Plan     @default(FREE)
+  status      BillingStatus @default(ACTIVE)
+  startDate   DateTime @default(now())
+  endDate     DateTime?
+  subscriptionId String?  
+
+
+  invoices    Invoice[]
+  transactions Transaction[]
+
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+enum Plan {
+  FREE
+  BUSINESS
+  ENTERPRISE
+}
+
+enum BillingStatus {
+  ACTIVE
+  CANCELED
+  EXPIRED
+  PAST_DUE
+}
+
+model Invoice {
+  id          String   @id @default(uuid())
+  billingId   String
+  billing     Billing  @relation(fields: [billingId], references: [id])
+
+  amount      Int
+  currency    String   @default("USD")
+  issuedAt    DateTime @default(now())
+  paidAt      DateTime?
+  status      InvoiceStatus @default(PENDING)
+}
+
+enum InvoiceStatus {
+  PENDING
+  PAID
+  FAILED
+}
+
+model Transaction {
+  id          String   @id @default(uuid())
+  billingId   String
+  billing     Billing  @relation(fields: [billingId], references: [id])
+
+  provider    String   
+  reference   String   
+  amount      Int
+  currency    String   @default("USD")
+  status      TransactionStatus @default(SUCCESS)
+  createdAt   DateTime @default(now())
+}
+
+enum TransactionStatus {
+  SUCCESS
+  FAILED
+  PENDING
 }
