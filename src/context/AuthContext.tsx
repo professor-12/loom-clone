@@ -16,7 +16,7 @@ interface AuthContextValue {
       error: string | null;
       status: number;
       loading: boolean;
-      signOut: () => Promise<any>;
+      signOut: () => Promise<void>;
 }
 
 const initialContextValue: AuthContextValue = {

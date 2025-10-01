@@ -1,7 +1,7 @@
 // import { getUser, signOut } from '@/actions/auth.actions'
 // import { useAuth } from '@/context/AuthContext'
 // import { getUser } from '@/services/auth.service'
-// import { redirect } from 'next/navigation'
+import { redirect } from 'next/navigation'
 // import React from 'react'
 
 import { auth } from "@/actions/auth.actions"
@@ -9,12 +9,10 @@ import { Button } from "@/components/ui/button"
 import Image from "next/image"
 
 const Page = async () => {
-      const { data } = await auth()
-
-      // const { error, status } = await getUser()
-      // if (status == 401) {
-      //       redirect("/login?from=dashboard")
-      // }
+      const { status } = await auth()
+      if (status == 401) {
+            redirect("/login")
+      }
       return (
             <div className="pt-15 w-full space-y-1 flex flex-col items-center">
                   <Image src="/home-empty-state.png" className="w-[27rem] h-[20rem]" width={4000} height={4000} alt="Width Empty state" />

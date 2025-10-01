@@ -1,7 +1,7 @@
 "use client"
 import { AnimatePresence, motion } from "motion/react"
 import { useSideBar } from '@/store/side-bar-tore'
-import { Bell, CircleUser, Gitlab, Infinity, PanelLeftClose, PanelRightOpen, SquareLibrary, User } from 'lucide-react'
+import { Bell, CircleUser, Infinity, PanelLeftClose, PanelRightOpen, SquareLibrary } from 'lucide-react'
 import React from 'react'
 import {
       Video,
@@ -27,7 +27,7 @@ export const navItems = [
       {
             icon: Bell,
             name: "Notifications",
-            link: "/record",
+            link: "/notifications",
       },
       {
             icon: Users,

@@ -9,7 +9,7 @@ interface LayoutProps {
       children: React.ReactNode
 }
 const Layout: FC<LayoutProps> = async ({ children }) => {
-      const { data, error, status } = await auth()
+      const { data } = await auth()
       if (!data) {
             redirect("/login");
       }

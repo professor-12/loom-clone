@@ -1,8 +1,8 @@
-import { PrismaClient } from "@/generated/prisma";
 import jwt, { JwtPayload } from "jsonwebtoken";
 import { clsx, type ClassValue } from "clsx";
 import { twMerge } from "tailwind-merge";
 import { JWTPayload } from "@/actions/auth.actions";
+import { PrismaClient } from "@prisma/client";
 export const COOKIE_NAME = "jwt_token";
 const JWT_EXPIRES_IN = "7d";
 

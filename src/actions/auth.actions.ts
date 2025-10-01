@@ -5,8 +5,6 @@ import { cookies } from "next/headers";
 import jwt from "jsonwebtoken";
 import { redirect } from "next/navigation";
 import { issueJwt, prisma } from "@/lib/utils";
-import { error } from "console";
-import { User } from "@/generated/prisma";
 
 export interface JWTPayload {
     sub: string; // user id

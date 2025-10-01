@@ -1,13 +1,9 @@
-import { AuthProvider } from "@/generated/prisma";
+// import { AuthProvider } from "@/generated/prisma";
 import { prisma } from "@/lib/utils";
 import { User } from "better-auth";
-import { cookies } from "next/headers";
-import jwt from "jsonwebtoken";
+import { AuthProvider } from "@prisma/client";
 
-interface JWTPayload {
-    email: string;
-    sub: string;
-}
+
 interface UserWithToken
     extends Omit<Omit<Omit<User, "id">, "createdAt">, "updatedAt">,
         Omit<AuthProvider, "userId"> {
@@ -123,5 +119,3 @@ export const signInWithGoogle = async (
 
     return newUser;
 };
-
-

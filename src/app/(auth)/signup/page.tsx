@@ -1,11 +1,9 @@
-"use client"
 import { Button } from '@/components/ui/button'
 import Link from 'next/link'
-import { useRouter } from 'next/navigation'
 import React from 'react'
 
 const Page = () => {
-      const { push } = useRouter()
+
       return (
             <div className='min-h-[100dvh] px-4 relative [--lns-color-primary:var(--primary)] overflow-hidden  space-y-12'>
                   <div className='absolute max-md:hidden bg-gradient-to-bl from-[#b2b3f1] -right-[30%] to-violet-200/10 h-[34rem] -z-10 w-[66rem] blur-[50px]'></div>

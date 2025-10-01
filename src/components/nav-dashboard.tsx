@@ -6,7 +6,7 @@ import { Button } from './ui/button'
 
 const NavDashBoard = async () => {
       const { data } = await auth()
-      const user = await getUser()
+      // const user = await getUser()
       return (
             <div className='[--h:60px] sticky top-0'>
                   <div className='h-[var(--h)] gap-4 flex justify-between items-center px-5  border-b absolute z-200 bg-white top-0 w-full'>

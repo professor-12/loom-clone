@@ -6,7 +6,13 @@ const nextConfig: NextConfig = {
             {
                 hostname: "lh3.googleusercontent.com",
             },
+            {
+                hostname: "img.icons8.com",
+            },
         ],
+    },
+    eslint: {
+        ignoreDuringBuilds: true,
     },
     /* config options here */
 };

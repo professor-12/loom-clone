@@ -1,5 +1,6 @@
 "use client"
 import { signInWithGoogleAction } from '@/actions/auth.actions'
+import Dot from '@/components/LogoAnimation'
 import { useRouter } from 'next/navigation'
 
 // import { redirect } from 'next/navigation'
@@ -24,7 +25,11 @@ const Page = ({ searchParams }: { searchParams: Promise<any> }) => {
       }, [])
 
 
-      return <>dd</>
+      return <div className='h-screen w-full flex-center bg-[#F2F2F2]'>
+            <div className='flex flex-col'>
+                  <Dot />
+            </div>
+      </div>
 
 
 }
