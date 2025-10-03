@@ -1,13 +1,18 @@
 "use client"
 import React, { useEffect, useState } from 'react'
 import OverLayay from './overlay'
-import { Grid2x2, Home, Mic, Octagon, Pause, PauseCircle, Play, RotateCcw, Square, Trash, Upload, Video, X } from 'lucide-react'
+import { Camera, Grid2x2, Home, Mic, MicOff, Octagon, Pause, PauseCircle, Play, RotateCcw, Square, Trash, Upload, Video, VideoOff, X } from 'lucide-react'
 import { Button } from '../ui/button'
 import { Trash2 } from 'lucide-react'
 import useScreenRecord from '@/hooks/useScreenRecord'
-import { GrResume } from 'react-icons/gr'
 
 const LoopVideoEngine = ({ onClose }: { onClose: () => void }) => {
+      const [useCamera, setUseCamera] = useState(true)
+      const [useMicrophone, setUseMicrophone] = useState(true)
+      const upLoadVideo = (finalStream: MediaStream) => {
+            console.log(finalStream)
+      }
+
       const {
             startRecording,
             stopRecording,
@@ -19,15 +24,18 @@ const LoopVideoEngine = ({ onClose }: { onClose: () => void }) => {
             recording,
             isNotPermitted,
             startCamera,
-            // startMic,
+            startMic,
+            stopMic,
             startScreen,
             stopCamera,
             stopAll,
-      } = useScreenRecord();
+            toggleCamera,
+            toggleMic
+      } = useScreenRecord(upLoadVideo);
 
       useEffect(() => {
             startCamera()
-            // startMic()
+            startMic()
             startScreen()
       }, [])
 
@@ -40,6 +48,7 @@ const LoopVideoEngine = ({ onClose }: { onClose: () => void }) => {
                   close()
             }
       }, [isNotPermitted])
+
 
       return (
             <>
@@ -61,13 +70,47 @@ const LoopVideoEngine = ({ onClose }: { onClose: () => void }) => {
                                           <Grid2x2 />
                                           <span>Window</span>
                                     </div>
-                                    <div className='hover:bg-primary flex items-center gap-2 px-4 rounded-xl transition-all duration-200 bg-[#2C2C2E] cursor-pointer hover:text-white p-3'>
-                                          <Video />
-                                          <span>Camera</span>
+                                    <div onClick={() => {
+                                          setUseCamera((prev) => {
+                                                if (prev) {
+                                                      stopCamera()
+                                                } else {
+                                                      startCamera()
+                                                }
+                                                return !prev
+
+                                          })
+                                    }} className='hover:bg-primary group flex items-center gap-2 px-4 rounded-xl transition-all justify-between duration-200 bg-[#2C2C2E] cursor-pointer hover:text-white p-3'>
+                                          <div className='flex items-center gap-1'>
+                                                {
+                                                      useCamera ?
+                                                            <Video /> :
+                                                            <VideoOff stroke='red' className='text-red' />
+                                                }
+                                                <span>Camera</span>
+                                          </div>
+                                          <span className={`text-xs group-hover:bg-white group-hover:text-primary ${useCamera ? 'bg-green-600/90' : 'bg-[#FB2C36]/70'}  p-2 rounded-lg`}>{useCamera ? "ON" : "OFF"}</span>
                                     </div>
-                                    <div onClick={() => stopCamera()} className='hover:bg-primary flex items-center gap-2 px-4 rounded-xl transition-all duration-200 bg-[#2C2C2E] cursor-pointer hover:text-white p-3'>
-                                          <Mic />
-                                          <span>Microphone</span>
+                                    <div onClick={() => {
+                                          setUseMicrophone((prev) => {
+                                                if (prev) {
+                                                      stopMic()
+                                                } else {
+                                                      startMic()
+                                                }
+                                                return !prev
+                                          }
+                                          )
+                                    }} className='hover:bg-primary group flex items-center gap-2 px-4 rounded-xl transition-all justify-between duration-200 bg-[#2C2C2E] cursor-pointer hover:text-white p-3'>
+                                          <div className='flex items-center gap-1'>
+                                                {
+                                                      useMicrophone ?
+                                                            <Mic /> :
+                                                            <MicOff stroke='red' className='text-red' />
+                                                }
+                                                <span>Microphone</span>
+                                          </div>
+                                          <span className={`text-xs group-hover:bg-white group-hover:text-primary ${useMicrophone ? 'bg-green-600/90' : 'bg-[#FB2C36]/70'}  p-2 rounded-lg`}>{useMicrophone ? "ON" : "OFF"}</span>
                                     </div>
                                     <div className='w-full'>
                                           {
@@ -84,7 +127,7 @@ const LoopVideoEngine = ({ onClose }: { onClose: () => void }) => {
 
                   <div onDragStart={(e) => { console.log(e) }} onMouseOver={(e) => { console.log(e) }} className={`fixed  duration-150 transition-all gap-4 items-end text-muted flex z-20 min-w-[18rem] px-5 bottom-1 left-1  rounded-3xl p-4`}>
                         <div className='size-[20rem] bg-white overflow-hidden rounded-full'>
-                              <video className='w-full h-full  object-cover -scale-x-100' autoPlay ref={(el) => el && (el.srcObject = cameraStream) as any}></video>
+                              <video muted className='w-full h-full  object-cover -scale-x-100' autoPlay ref={(el) => el && (el.srcObject = cameraStream) as any}></video>
                         </div>
                         {
                               recordedBlob &&

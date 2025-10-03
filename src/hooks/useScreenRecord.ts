@@ -1,6 +1,6 @@
 import { useState, useRef, useCallback } from "react";
 
-const useScreenRecord = () => {
+const useScreenRecord = (upLoadStream: (a: MediaStream) => any) => {
     const [cameraStream, setCameraStream] = useState<MediaStream | null>(null);
     const [micStream, setMicStream] = useState<MediaStream | null>(null);
     const [screenStream, setScreenStream] = useState<MediaStream | null>(null);
@@ -17,9 +17,9 @@ const useScreenRecord = () => {
     const startCamera = useCallback(async () => {
         const stream = await navigator.mediaDevices.getUserMedia({
             video: true,
+            audio: true,
         });
         setCameraStream(stream);
-        // return stream;
     }, []);
 
     const stopCamera = useCallback(() => {
@@ -38,6 +38,28 @@ const useScreenRecord = () => {
     // 🎤 start mic
 
     // 🖥️ start screen
+
+    const startMic = async () => {
+        const stream = await navigator.mediaDevices.getUserMedia({
+            // video: true,
+            audio: true,
+        });
+        setMicStream(stream);
+    };
+
+    const stopMic = useCallback(() => {
+        micStream?.getTracks().forEach((track) => track.stop());
+        setMicStream(null);
+    }, [micStream]);
+
+    const toggleMic = useCallback(
+        (enable: boolean) => {
+            micStream
+                ?.getAudioTracks()
+                .forEach((track) => (track.enabled = enable));
+        },
+        [cameraStream]
+    );
     const startScreen = useCallback(async () => {
         try {
             const stream = await navigator.mediaDevices.getDisplayMedia({
@@ -48,6 +70,7 @@ const useScreenRecord = () => {
             return stream;
         } catch (err) {
             setIsNotpermitted(true);
+            stopAll();
         }
     }, []);
 
@@ -69,7 +92,7 @@ const useScreenRecord = () => {
     const startRecording = useCallback(async () => {
         const tracks: MediaStreamTrack[] = [
             // ...(cameraStream?.getTracks() || []),
-            // ...(micStream?.getTracks() || []),
+            ...(micStream?.getTracks() || []),
             ...(screenStream?.getTracks() || []),
         ];
 
@@ -119,6 +142,7 @@ const useScreenRecord = () => {
     const stopAll = () => {
         stopCamera();
         stopScreen();
+        stopMic();
         stopRecording();
     };
 
@@ -128,6 +152,9 @@ const useScreenRecord = () => {
         screenStream,
         recording,
         recordedBlob,
+        startMic,
+        stopMic,
+        toggleMic,
         startCamera,
         stopCamera,
         startScreen,
