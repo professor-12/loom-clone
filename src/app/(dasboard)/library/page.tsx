@@ -9,7 +9,6 @@ export const metadata: Metadata = {
 }
 
 const Page = async () => {
-      await Promise.resolve()
       return (
             <div className='pt-15'>
                   <div className='space-y-12'>

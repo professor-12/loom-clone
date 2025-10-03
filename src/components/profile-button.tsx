@@ -2,51 +2,30 @@
 import { JWTPayload, signOut } from '@/actions/auth.actions'
 import { LogOut, X } from 'lucide-react'
 import Image from 'next/image'
-import React, { useEffect, useState } from 'react'
+import DropDown from './ui/drop-down'
 
 const ProfileButton = ({ data }: { data: JWTPayload & { avatar_url?: string } | null }) => {
       const { email, avatar_url } = data || {}
-      const [isDropDown, setIsDropDown] = useState(false)
-
-      useEffect(() => {
-            const handleClickOutside = (e: MouseEvent) => {
-                  const target = e.target as HTMLElement
-                  if (!target.closest('[data-id="profile__"]') && !target.closest('#profile-trigger')) {
-                        setIsDropDown(false)
-                  }
-            }
-
-            document.addEventListener("click", handleClickOutside)
-            return () => document.removeEventListener("click", handleClickOutside)
-      }, [])
-
       return (
-            <div className="relative">
-                  <div
-                        id="profile-trigger"
-                        onClick={(e) => {
-                              e.stopPropagation()
-                              setIsDropDown((prev) => !prev)
-                        }}
-                        className="h-[35px] aspect-square overflow-hidden relative cursor-pointer text-xl capitalize text-white rounded-full bg-red-800 flex items-center justify-center"
-                  >
+            // <div className="relative">
+            <DropDown>
+                  {/* <DropDown.Wrapper> */}
+                  <DropDown.Trigger className="h-[35px] aspect-square overflow-hidden relative cursor-pointer text-xl capitalize text-white rounded-full bg-red-800 flex items-center justify-center">
                         {avatar_url ? (
                               <Image className="object-cover" src={avatar_url} fill alt="Profile" />
                         ) : (
                               <p className="text-xl font-bold">{email?.substring(0, 1)}</p>
                         )}
-                  </div>
-                  {isDropDown && (
-                        <div
-                              data-id="profile__"
-                              className="absolute top-[160%] right-0 w-[280px] z-20 rounded-3xl bg-white border border-border shadow p-4"
-                        >
-                              <div className="flex w-full justify-end">
+                  </DropDown.Trigger>
+                  <DropDown.Body align='right' className="top-[160%] absolute body right-0 w-[280px] rounded-3xl bg-white border border-border shadow p-4">
+                        <div className=''>
+                              <div className="flex  w-full justify-end">
                                     <button
-                                          onClick={() => setIsDropDown(false)}
                                           className="ring-2 cursor-pointer  h-8 w-8 flex items-center justify-center ring-primary/80 ring-offset-2 rounded-lg"
                                     >
-                                          <X className="h-5 w-5 font-bold" />
+                                          <DropDown.Trigger>
+                                                <X className="h-5 w-5 font-bold" />
+                                          </DropDown.Trigger>
                                     </button>
                               </div>
 
@@ -69,8 +48,11 @@ const ProfileButton = ({ data }: { data: JWTPayload & { avatar_url?: string } | 
                                     </button>
                               </div>
                         </div>
-                  )}
-            </div>
+                  </DropDown.Body>
+                  {/* </DropDown.Wrapper> */}
+            </DropDown >
+
+            // </div>
       )
 }
 

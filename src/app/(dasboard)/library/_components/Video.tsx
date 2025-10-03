@@ -1,7 +1,9 @@
+"use client"
 import { Button } from '@/components/ui/button'
-import React from 'react'
+import React, { useState } from 'react'
 
 const Video = () => {
+      // const [openVideo, setOpenVideo] = useState(false)
       return (
             <div>
                   <div className='flex justify-between'>

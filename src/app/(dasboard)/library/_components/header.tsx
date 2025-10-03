@@ -1,7 +1,13 @@
+"use client"
 import { Button } from '@/components/ui/button'
+import DropDown from '@/components/ui/drop-down';
+import { Upload, Video } from 'lucide-react';
 import React from 'react'
 import { PiCaretDownBold } from "react-icons/pi";
+import NewVideoButton from './NewVideoButton';
+import useScreenRecord from '@/hooks/useScreenRecord';
 const Header = () => {
+
       return (
             <div className='flex justify-between items-end w-full'>
                   <div className='space-y-1'>
@@ -10,12 +16,9 @@ const Header = () => {
                   </div>
                   <div className='gap-2 flex font-bold'>
                         <Button className='font-bold text-sm rounded-xl' variant={"outline"}>New Folder</Button>
-                        <Button className='font-bold text-sm rounded-xl'>
-                              <span>New Video</span>
-                              <span><PiCaretDownBold className='text-white text-xl font-bold' /></span>
-                        </Button>
+                        <NewVideoButton />
                   </div>
-            </div>
+            </div >
       )
 }
 
