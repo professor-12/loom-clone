@@ -46,35 +46,58 @@ export const navItems = [
       },
 ];
 
-const SideBar = () => {
-      const { isCollapsed, close, open } = useSideBar()
+const SideBar = ({ isMobile = false }: { isMobile?: boolean }) => {
+      const { isCollapsed: isCollapsed, close, open } = useSideBar()
       return (
-            <div className={`h-full max-sm:hidden duration-500 bg-[#F8F8F8] ${isCollapsed ? "w-[5rem]" : "w-[15rem]"}`}>
-                  <div className={`w-full transition-all  items-center p-4 flex`}>
-                        <AnimatePresence>
-                              {
-                                    !isCollapsed &&
-                                    <motion.a href="/" initial={{ width: "0px" }} animate={{ width: "auto" }} exit={{ width: "0px" }} transition={{ duration: 0.4 }} className="text-xl  text-left  flex-1 font-bold flex items-center gap-1">
+            <div className={`h-full  duration-500 bg-[#F8F8F8] ${isCollapsed && !isMobile ? "w-[5rem]" : "w-[15rem]"} ${isMobile ? "" : "max-md:hidden"
+                  }`}>
+                  {
+                        isMobile ?
+                              <div className={`w-full transition-all  items-center p-4 flex`}>
+                                    <AnimatePresence>
+                                          {
+                                                <motion.a href="/" initial={{ width: "0px" }} animate={{ width: "auto" }} exit={{ width: "0px" }} transition={{ duration: 0.4 }} className="text-xl  text-left  flex-1 font-bold flex items-center gap-1">
 
-                                          <div className="p-1.5 rounded-md bg-primary"><Infinity className="text-white" /></div>
-                                          <p>loop</p>
-                                    </motion.a>
-                              }
-                        </AnimatePresence>
-                        <div onClick={isCollapsed ? open : close} className='ring-primary mx-auto  p-1 cursor-pointer transition-all  active:ring-2 rounded-lg ring'>
-                              {
-                                    !isCollapsed ?
-                                          <PanelRightOpen /> :
-                                          <PanelLeftClose />
-                              }
-                        </div>
+                                                      <div className="p-1.5 rounded-md bg-primary"><Infinity className="text-white" /></div>
+                                                      <p>loop</p>
+                                                </motion.a>
+                                          }
+                                    </AnimatePresence>
+                                    <div className='ring-primary mx-auto  p-1 cursor-pointer transition-all  active:ring-2 rounded-lg ring'>
+                                          {
+                                                !isCollapsed && !isMobile ?
+                                                      <PanelRightOpen /> :
+                                                      <PanelLeftClose />
+                                          }
+                                    </div>
+                              </div>
+                              :
+                              <div className={`w-full transition-all  items-center p-4 flex`}>
+                                    <AnimatePresence>
+                                          {
+                                                !isCollapsed &&
+                                                <motion.a href="/" initial={{ width: "0px" }} animate={{ width: "auto" }} exit={{ width: "0px" }} transition={{ duration: 0.4 }} className="text-xl  text-left  flex-1 font-bold flex items-center gap-1">
 
-                  </div>
+                                                      <div className="p-1.5 rounded-md bg-primary"><Infinity className="text-white" /></div>
+                                                      <p>loop</p>
+                                                </motion.a>
+                                          }
+                                    </AnimatePresence>
+                                    <div onClick={isCollapsed && !isMobile ? open : close} className='ring-primary mx-auto  p-1 cursor-pointer transition-all  active:ring-2 rounded-lg ring'>
+                                          {
+                                                !isCollapsed && !isMobile ?
+                                                      <PanelRightOpen /> :
+                                                      <PanelLeftClose />
+                                          }
+                                    </div>
+
+                              </div>
+                  }
 
                   {/* Nav items */}
                   <div className="space-y-1  p-4  text-sm">
                         {navItems.map((item) => (
-                              <NavItems key={item.link} isCollapsed={isCollapsed} item={item} />
+                              <NavItems key={item.link} isCollapsed={isCollapsed && !isMobile} item={item} />
                         ))}
                   </div>
             </div>
@@ -92,12 +115,12 @@ const NavItems = ({ isCollapsed, item }: { isCollapsed: boolean, item: any }) =>
             <Link
                   key={item.link}
                   href={item.link}
-                  className={"flex hover:bg-[#E2E1F8]/60 transition-all duration-200 px-3 p-2 items-center gap-3 w-full mx-auto rounded-lg" + ` ${isActive && "bg-[#E2E1F8]/60"}`}
+                  className={"flex hover:bg-[#E2E1F8]/60 transition-all duration-200 px-3 p-2 items-center gap-3 w-full mx-auto rounded-lg" + ` ${isActive && "bg-[#E2E1F8]/60"} `}
             >
-                  <item.icon className={`font-bold ${isActive && 'text-primary'}`} />
+                  <item.icon className={`font-bold ${isActive && 'text-primary'} `} />
                   {
                         !isCollapsed &&
-                        <span className={`font-bold ${isActive && 'text-primary'}`}>{item.name}</span>
+                        <span className={`font-bold ${isActive && 'text-primary'} `}>{item.name}</span>
                   }
             </Link>
       )
