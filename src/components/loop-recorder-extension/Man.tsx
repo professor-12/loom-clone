@@ -5,7 +5,6 @@ import { Camera, Grid2x2, Home, Mic, MicOff, Octagon, Pause, PauseCircle, Play, 
 import { Button } from '../ui/button'
 import { Trash2 } from 'lucide-react'
 import useScreenRecord from '@/hooks/useScreenRecord'
-import { playMeetJoinSound } from '@/lib/sound'
 
 const LoopVideoEngine = ({ onClose }: { onClose: () => void }) => {
       const [useCamera, setUseCamera] = useState(true)
