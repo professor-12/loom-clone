@@ -4,9 +4,9 @@ import { Download } from "lucide-react"
 import Link from 'next/link'
 const HeroSection = () => {
       return (
-            <div className='w-full bg-light-foreground min-h-[100dvh] flex py-28 pb-20 gap-6 items-center justify-center flex-col'>
-                  <h1 className='text-6xl text-dark-primary-foreground text-center text-[67.3077px] font-extrabold tracking-tighter'>One video is worth a thousand words</h1>
-                  <p className=' text-[#3d2e7c] text-[27.4615px] max-w-[840.154px] text-balance text-center '>Easily record and share AI-powered video messages with your teammates and customers to supercharge productivity</p>
+            <div className='w-full max-md:px-4 bg-light-foreground min-h-[100dvh] flex py-20 md:py-28 pb-20 gap-6 items-center justify-center flex-col'>
+                  <h1 className='md:text-6xl text-4xl text-dark-primary-foreground text-center md:text-[67.3077px] font-extrabold tracking-tighter'>One video is worth a thousand words</h1>
+                  <p className=' text-[#3d2e7c] text-xl md:text-[27.4615px] max-w-[840.154px] text-balance text-center '>Easily record and share AI-powered video messages with your teammates and customers to supercharge productivity</p>
                   <div className='flex items-center pt-6 gap-5'>
                         <Link href={"/signup"}>
 
@@ -16,7 +16,7 @@ const HeroSection = () => {
                   </div>
                   <div className='aspect-video relative overflow-hidden hover: w-full mx-auto md:w-[90%] lg:max-w-[80%] rounded-[3rem] bg-black'>
                         <div className=''></div>
-                        <figure className='w-full h-full'>
+                        <figure className='w-full hover:brightness-90 h-full'>
                               <video className='object-contain' loop muted src="https://cdn.loom.com/sessions/thumbnails/313bf71d20ca47b2a35b6634cefdb761-00001.mp4"></video>
                         </figure>
                   </div>

@@ -1,5 +1,4 @@
 import { PropsWithChildren } from "react"
-import { Metadata } from "next"
 import NavBar from "@/components/nav-bar"
 
 
