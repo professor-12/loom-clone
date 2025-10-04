@@ -5,6 +5,7 @@ import { Camera, Grid2x2, Home, Mic, MicOff, Octagon, Pause, PauseCircle, Play, 
 import { Button } from '../ui/button'
 import { Trash2 } from 'lucide-react'
 import useScreenRecord from '@/hooks/useScreenRecord'
+import { playMeetJoinSound } from '@/lib/sound'
 
 const LoopVideoEngine = ({ onClose }: { onClose: () => void }) => {
       const [useCamera, setUseCamera] = useState(true)
@@ -48,6 +49,11 @@ const LoopVideoEngine = ({ onClose }: { onClose: () => void }) => {
                   close()
             }
       }, [isNotPermitted])
+
+      const handlePlay = () => {
+            const audio = new Audio("https://www.gstatic.com/meet/sounds/join_call_6a6a67d6bcc7a4e373ed40fdeff3930a.ogg");
+            audio.play().catch((err) => console.error("Playback failed:", err));
+      };
 
 
       return (
@@ -115,7 +121,7 @@ const LoopVideoEngine = ({ onClose }: { onClose: () => void }) => {
                                     <div className='w-full'>
                                           {
                                                 !recording ?
-                                                      <Button onClick={() => startRecording()} className='w-full bg-red-500 font-semibold rounded-xl h-12'>Start Recording</Button>
+                                                      <Button onClick={() => { handlePlay(); setTimeout(startRecording, 700); }} className='w-full bg-red-500 font-semibold rounded-xl h-12'>Start Recording</Button>
                                                       :
                                                       <Button onClick={() => stopRecording()} className='w-full bg-red-500 font-semibold rounded-xl h-12'>Stop Recording</Button>
                                           }
@@ -127,7 +133,11 @@ const LoopVideoEngine = ({ onClose }: { onClose: () => void }) => {
 
                   <div onDragStart={(e) => { console.log(e) }} onMouseOver={(e) => { console.log(e) }} className={`fixed  duration-150 transition-all gap-4 items-end text-muted flex z-20 min-w-[18rem] px-5 bottom-1 left-1  rounded-3xl p-4`}>
                         <div className='size-[20rem] bg-white overflow-hidden rounded-full'>
-                              <video muted className='w-full h-full  object-cover -scale-x-100' autoPlay ref={(el) => el && (el.srcObject = cameraStream) as any}></video>
+                              {
+                                    cameraStream ?
+                                          <video muted className='w-full h-full  object-cover -scale-x-100' autoPlay ref={(el) => el && (el.srcObject = cameraStream) as any}></video> :
+                                          <div className='bg-primary flex-center w-full text-5xl font-bold h-full text-white'>B</div>
+                              }
                         </div>
                         {
                               recordedBlob &&
