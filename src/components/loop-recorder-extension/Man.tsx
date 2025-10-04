@@ -1,16 +1,54 @@
 "use client"
 import React, { useEffect, useState } from 'react'
 import OverLayay from './overlay'
-import { Camera, Grid2x2, Home, Mic, MicOff, Octagon, Pause, PauseCircle, Play, RotateCcw, Square, Trash, Upload, Video, VideoOff, X } from 'lucide-react'
+import { Grid2x2, Home, Mic, MicOff, Pause, Play, RotateCcw, Square, Video, VideoOff, X } from 'lucide-react'
 import { Button } from '../ui/button'
 import { Trash2 } from 'lucide-react'
 import useScreenRecord from '@/hooks/useScreenRecord'
+import UploadProgressModal from '../upload-progress'
+import axios from 'axios'
 
 const LoopVideoEngine = ({ onClose }: { onClose: () => void }) => {
       const [useCamera, setUseCamera] = useState(true)
       const [useMicrophone, setUseMicrophone] = useState(true)
-      const upLoadVideo = (finalStream: MediaStream) => {
-            console.log(finalStream)
+      const [progress, setProgress] = useState(0);
+      const [open, setOpen] = useState(false);
+      const [cancelTokenSource, setCancelTokenSource] = useState<any>(null);
+      const upLoadVideo = async (finalStream: Blob) => {
+            setOpen(true);
+            setProgress(0);
+            console.log("This is done.....")
+            const formData = new FormData()
+            formData.set("file", finalStream)
+            const source = axios.CancelToken.source();
+            setCancelTokenSource(source);
+
+            try {
+                  await axios.post("/api/video/upload", formData, {
+                        cancelToken: source.token,
+                        onUploadProgress: (event) => {
+                              if (event.total) {
+                                    const percent = Math.round((event.loaded * 100) / event.total);
+                                    setProgress(percent);
+                              }
+                        },
+                  });
+
+                  setProgress(100);
+                  setTimeout(() => setOpen(false), 1000);
+            } catch (err: any) {
+                  if (axios.isCancel(err)) {
+                        console.log("Upload canceled");
+                  } else {
+                        console.error(err);
+                  }
+                  setOpen(false);
+            }
+            // const res = await fetch("/api/video/upload", { method: "POST", body: formData })
+            // const data = await res.json()
+            // console.log(data)
+            // close()
+            // await upLoadVideoAction({description:""})
       }
 
       const {
@@ -28,9 +66,7 @@ const LoopVideoEngine = ({ onClose }: { onClose: () => void }) => {
             stopMic,
             startScreen,
             stopCamera,
-            stopAll,
-            toggleCamera,
-            toggleMic
+            stopAll
       } = useScreenRecord(upLoadVideo);
 
       useEffect(() => {
@@ -63,6 +99,7 @@ const LoopVideoEngine = ({ onClose }: { onClose: () => void }) => {
                               <OverLayay />
                         </div>
                   }
+                  <UploadProgressModal open={open} progress={progress}  />
                   {
                         !recording &&
                         <div className={`fixed  duration-150 transition-all text-muted z-20 w-[18rem] px-5 top-12  rounded-3xl p-4 bg-[#1F1F21] right-12`}>
@@ -130,7 +167,7 @@ const LoopVideoEngine = ({ onClose }: { onClose: () => void }) => {
                         </div>
                   }
 
-                  <div onDragStart={(e) => { console.log(e) }} onMouseOver={(e) => { console.log(e) }} className={`fixed  duration-150 transition-all gap-4 items-end text-muted flex z-20 min-w-[18rem] px-5 bottom-1 left-1  rounded-3xl p-4`}>
+                  <div className={`fixed  duration-150 transition-all gap-4 items-end text-muted flex z-20 min-w-[18rem] px-5 bottom-1 left-1  rounded-3xl p-4`}>
                         <div className='size-[20rem] bg-white overflow-hidden rounded-full'>
                               {
                                     cameraStream ?
@@ -138,10 +175,10 @@ const LoopVideoEngine = ({ onClose }: { onClose: () => void }) => {
                                           <div className='bg-primary flex-center w-full text-5xl font-bold h-full text-white'>B</div>
                               }
                         </div>
-                        {
+                        {/* {
                               recordedBlob &&
                               <video className='w-[24rem] h-[24rem]' autoPlay src={URL.createObjectURL(recordedBlob)}></video>
-                        }
+                        } */}
                         <div className={`${!recording ? 'bg-[#2C2C2E]/60' : 'bg-[#1F1F21]'} flex px-3 space-x-4 py-3 h-12 rounded-2xl ring-4 ring-muted`}>
                               <Square fill={recording ? "red" : "none"} stroke={recording ? "red" : "currentColor"} className='ring-0 cursor-pointer' onClick={stopRecording} />
                               {isPaused ?

@@ -1,6 +1,6 @@
 import { useState, useRef, useCallback } from "react";
 
-const useScreenRecord = (upLoadStream: (a: MediaStream) => any) => {
+const useScreenRecord = (upLoadStream: (a: Blob) => Promise<any>) => {
     const [cameraStream, setCameraStream] = useState<MediaStream | null>(null);
     const [micStream, setMicStream] = useState<MediaStream | null>(null);
     const [screenStream, setScreenStream] = useState<MediaStream | null>(null);
@@ -110,8 +110,9 @@ const useScreenRecord = (upLoadStream: (a: MediaStream) => any) => {
             if (e.data.size > 0) chunksRef.current.push(e.data);
         };
 
-        recorderRef.current.onstop = () => {
+        recorderRef.current.onstop = async () => {
             const blob = new Blob(chunksRef.current, { type: "video/webm" });
+            await upLoadStream?.(blob);
             setRecordedBlob(blob);
             stopAll();
             chunksRef.current = [];
