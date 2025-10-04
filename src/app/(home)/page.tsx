@@ -1,5 +1,6 @@
 import HeroSection from '@/components/hero-section'
 import SecondHero from '@/components/SecondHero'
+import SectionThree from '@/components/SectionThree'
 import React from 'react'
 
 const Home = async () => {
@@ -8,6 +9,7 @@ const Home = async () => {
     <main className='w-full'>
       <HeroSection />
       <SecondHero />
+      <SectionThree />
     </main>
   )
 }

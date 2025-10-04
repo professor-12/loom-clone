@@ -159,4 +159,8 @@
         border-bottom: 5px solid black; /* triangle color */
         /* position: absolute; */
     }
+
+    .container {
+        @apply lg:w-[80%] w-full px-4 max-md:px-3 mx-auto;
+    }
 }
