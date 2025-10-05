@@ -15,9 +15,8 @@ const Page = ({ searchParams }: { searchParams: Promise<any> }) => {
             (async () => {
                   try {
                         const { code } = await searchParams
-                        console.log(code)
                         await signInWithGoogleAction(code)
-                        replace("/dashboard?from=google_callback")
+                        replace("/library?from=google_callback")
                   } catch (err) {
                         replace("/login?err=AuthFailed", { scroll: true })
                   }

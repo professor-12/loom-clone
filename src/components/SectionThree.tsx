@@ -21,7 +21,7 @@ const SectionThree = () => {
                                           </div>
                                           <div className='space-y-4'>
                                                 <h1 className='text-2xl lg:text-3xl font-bold'>Lightning fast screen <br /> recording</h1>
-                                                <p className='text-lg lg:text-xl text-left'>Easily record your screen and camera. <br /> Record on any device using Loom’s Chrome extension, <br /> desktop app or mobile app.</p>
+                                                <p className='text-lg lg:text-xl text-left'>Easily record your screen and camera. <br /> Record on any device using Loop’s Chrome extension, <br /> desktop app or mobile app.</p>
                                                 <Link href={"/login"}>
                                                       <button className='p-4 text-white font-black  px-6 rounded-full bg-primary'>Record now</button>
                                                 </Link>
@@ -35,7 +35,7 @@ const SectionThree = () => {
                   </div>
                   <div className='w-full space-y-4 text-white py-24 bg-black md:rounded-[45px] p-4 mx-auto md:max-w-[95%]'>
                         <h1 className='text-white text-4xl font-bold text-center'>Keep your content safe</h1>
-                        <p className='font-semibold mt-5 text-center xl:max-w-3xl max-w-2xl text-xl md:text-2xl mx-auto'>Enterprise-grade security to keep your data and your customer’s data private and secure. We offer SSO, SCIM as well as custom data retention policies and privacy settings.</p>
+                        <p className='font-medium mt-5 text-center xl:max-w-3xl max-w-2xl text-xl md:text-2xl mx-auto'>Enterprise-grade security to keep your data and your customer’s data private and secure. We offer SSO, SCIM as well as custom data retention policies and privacy settings.</p>
 
                   </div>
             </div>

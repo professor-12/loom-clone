@@ -9,6 +9,9 @@ const nextConfig: NextConfig = {
             {
                 hostname: "img.icons8.com",
             },
+            {
+                hostname: "res.cloudinary.com",
+            },
         ],
     },
     eslint: {

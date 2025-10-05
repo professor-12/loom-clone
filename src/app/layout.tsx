@@ -3,6 +3,7 @@ import "./globals.css"
 import { Metadata } from "next"
 import { Poppins } from "next/font/google"
 import AuthServer from "@/context/AuthServer"
+import { Toaster } from "@/components/ui/sonner"
 
 
 
@@ -19,6 +20,7 @@ export default function RootLayout({ children }: PropsWithChildren) {
       <html lang="en">
         <body className={""} cz-shortcut-listen="true">
           <AuthServer>
+            <Toaster />
             {children}
           </AuthServer>
         </body>

@@ -17,7 +17,7 @@ const ProfileButton = ({ data }: { data: JWTPayload & { avatar_url?: string } | 
                               <p className="text-xl font-bold">{email?.substring(0, 1)}</p>
                         )}
                   </DropDown.Trigger>
-                  <DropDown.Body align='right' className="top-[160%] absolute body right-0 w-[280px] rounded-3xl bg-white border border-border shadow p-4">
+                  <DropDown.Body align='right' className="top-[160%] absolute body right-0 w-[280px] !rounded-3xl bg-white border border-border shadow p-4">
                         <div className=''>
                               <div className="flex  w-full justify-end">
                                     <button

@@ -14,7 +14,7 @@ const Page = () => {
                               <div className='text-2xl font-semibold flex-center'><Infinity className='text-primary w-12 h-12' />loop</div>
                         </Link>
                   </div>
-                  <div>
+                  <div className=''>
                         <div className='max-w-lg px-3 pt-12 gap-12 w-full mx-auto bg-white shadow-[0_0_20px] shadow-black/10 p-4 flex-center rounded-3xl flex-col'>
                               <h1 className='text-3xl max-w-[80%] max-md:text-2xl font-medium text-center'>Record your first Loop video in seconds</h1>
                               <Link className='w-full' href={`https://accounts.google.com/o/oauth2/auth?scope=email%20profile openid&response_type=code&access_type=offline&&redirect_uri=${process.env.NEXT_PUBLIC_GOOGLE_CALLBACK_URL}&client_id=${process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID as string}`}>

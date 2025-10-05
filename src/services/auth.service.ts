@@ -3,7 +3,6 @@ import { prisma } from "@/lib/utils";
 import { User } from "better-auth";
 import { AuthProvider } from "@prisma/client";
 
-
 interface UserWithToken
     extends Omit<Omit<Omit<User, "id">, "createdAt">, "updatedAt">,
         Omit<AuthProvider, "userId"> {
@@ -35,7 +34,6 @@ export class GoogleServices {
         const queryString = new URLSearchParams(options)
             .toString()
             .replaceAll("+", "%20");
-        console.log(queryString);
         return `${rootUrl}?${queryString}`;
     }
 

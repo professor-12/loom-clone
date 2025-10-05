@@ -7,6 +7,7 @@ import { Trash2 } from 'lucide-react'
 import useScreenRecord from '@/hooks/useScreenRecord'
 import UploadProgressModal from '../upload-progress'
 import axios from 'axios'
+import { toast } from 'sonner'
 
 const LoopVideoEngine = ({ onClose }: { onClose: () => void }) => {
       const [useCamera, setUseCamera] = useState(true)
@@ -14,10 +15,11 @@ const LoopVideoEngine = ({ onClose }: { onClose: () => void }) => {
       const [progress, setProgress] = useState(0);
       const [open, setOpen] = useState(false);
       const [cancelTokenSource, setCancelTokenSource] = useState<any>(null);
+
+
       const upLoadVideo = async (finalStream: Blob) => {
             setOpen(true);
             setProgress(0);
-            console.log("This is done.....")
             const formData = new FormData()
             formData.set("file", finalStream)
             const source = axios.CancelToken.source();
@@ -35,20 +37,21 @@ const LoopVideoEngine = ({ onClose }: { onClose: () => void }) => {
                   });
 
                   setProgress(100);
-                  setTimeout(() => setOpen(false), 1000);
+                  setOpen(false)
+                  toast.success("Video uploaded successfully")
+                  // close()
             } catch (err: any) {
                   if (axios.isCancel(err)) {
                         console.log("Upload canceled");
+                        toast.error("Upload canceled")
                   } else {
                         console.error(err);
+                        toast.error("Failed to upload Video to the server")
                   }
                   setOpen(false);
+            } finally {
+                  close()
             }
-            // const res = await fetch("/api/video/upload", { method: "POST", body: formData })
-            // const data = await res.json()
-            // console.log(data)
-            // close()
-            // await upLoadVideoAction({description:""})
       }
 
       const {
@@ -81,6 +84,7 @@ const LoopVideoEngine = ({ onClose }: { onClose: () => void }) => {
       }
       useEffect(() => {
             if (isNotPermitted) {
+                  toast.error("Please accept permission")
                   close()
             }
       }, [isNotPermitted])
@@ -95,13 +99,13 @@ const LoopVideoEngine = ({ onClose }: { onClose: () => void }) => {
             <>
                   {
                         !recording &&
-                        <div onClick={close}>
+                        <div>
                               <OverLayay />
                         </div>
                   }
-                  <UploadProgressModal open={open} progress={progress}  />
+                  <UploadProgressModal open={open} progress={progress} />
                   {
-                        !recording &&
+                        !recording && !open &&
                         <div className={`fixed  duration-150 transition-all text-muted z-20 w-[18rem] px-5 top-12  rounded-3xl p-4 bg-[#1F1F21] right-12`}>
                               <div className='text-white/60 justify-between flex items-center'>
                                     <X onClick={close} className='cursor-pointer' />

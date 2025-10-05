@@ -40,7 +40,6 @@ const useRecord = (stream: MediaStream | null): UseRecordResult => {
 
         recorder.onstop = () => {
             const completeBlob = new Blob(chunks, { type: "video/webm" });
-            console.log(chunks);
             setBlob(completeBlob);
             setUrl(URL.createObjectURL(completeBlob));
             setHasFinished(true);
