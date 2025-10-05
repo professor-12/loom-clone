@@ -1,4 +1,5 @@
 import { useState, useRef, useCallback } from "react";
+import useRecordingDuration from "./useDuration";
 
 const useScreenRecord = (upLoadStream: (a: Blob) => Promise<any>) => {
     const [cameraStream, setCameraStream] = useState<MediaStream | null>(null);
@@ -8,7 +9,8 @@ const useScreenRecord = (upLoadStream: (a: Blob) => Promise<any>) => {
     const [isPaused, setIsPaused] = useState<boolean>(false);
     const [isNotPermitted, setIsNotpermitted] = useState(false);
     const [recordedBlob, setRecordedBlob] = useState<Blob | null>(null);
-    const [timer, setTimer] = useState(5);
+    const uploadRef = useRef(false);
+    const { duration, startDuration, stopDuration } = useRecordingDuration();
 
     const recorderRef = useRef<MediaRecorder | null>(null);
     const chunksRef = useRef<Blob[]>([]);
@@ -35,13 +37,9 @@ const useScreenRecord = (upLoadStream: (a: Blob) => Promise<any>) => {
         },
         [cameraStream]
     );
-    // 🎤 start mic
-
-    // 🖥️ start screen
 
     const startMic = async () => {
         const stream = await navigator.mediaDevices.getUserMedia({
-            // video: true,
             audio: true,
         });
         setMicStream(stream);
@@ -70,7 +68,7 @@ const useScreenRecord = (upLoadStream: (a: Blob) => Promise<any>) => {
             return stream;
         } catch (err) {
             setIsNotpermitted(true);
-            stopAll();
+            stopAll({ upload: false });
         }
     }, []);
 
@@ -106,15 +104,19 @@ const useScreenRecord = (upLoadStream: (a: Blob) => Promise<any>) => {
         chunksRef.current = [];
         99;
 
+        startDuration();
         recorderRef.current.ondataavailable = (e) => {
             if (e.data.size > 0) chunksRef.current.push(e.data);
         };
 
         recorderRef.current.onstop = async () => {
             const blob = new Blob(chunksRef.current, { type: "video/webm" });
-            await upLoadStream?.(blob);
             setRecordedBlob(blob);
-            stopAll();
+            stopDuration();
+            if (uploadRef.current) {
+                await upLoadStream?.(blob);
+            }
+            stopAll({ upload: false });
             chunksRef.current = [];
         };
 
@@ -122,7 +124,8 @@ const useScreenRecord = (upLoadStream: (a: Blob) => Promise<any>) => {
         setRecording(true);
     }, [cameraStream, micStream, screenStream]);
 
-    const stopRecording = useCallback(() => {
+    const stopRecording = useCallback((upload: boolean) => {
+        uploadRef.current = upload;
         recorderRef.current?.stop();
         setRecording(false);
     }, []);
@@ -130,21 +133,23 @@ const useScreenRecord = (upLoadStream: (a: Blob) => Promise<any>) => {
     const pauseRecording = () => {
         if (recording && !isPaused) {
             recorderRef.current!?.pause();
+            stopDuration();
             setIsPaused(true);
         }
     };
     const resumeRecording = () => {
         if (recording && isPaused) {
             recorderRef.current?.resume();
+            startDuration();
             setIsPaused(false);
         }
     };
 
-    const stopAll = () => {
+    const stopAll = ({ upload = false }: { upload: boolean }) => {
         stopCamera();
         stopScreen();
         stopMic();
-        stopRecording();
+        stopRecording(upload);
     };
 
     return {
@@ -169,6 +174,7 @@ const useScreenRecord = (upLoadStream: (a: Blob) => Promise<any>) => {
         toggleScreen,
         isNotPermitted,
         isPaused,
+        duration,
     };
 };
 

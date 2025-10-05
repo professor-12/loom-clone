@@ -1,8 +1,12 @@
+import { getVideo } from '@/actions/video.actions'
 import React from 'react'
 
-const Share = () => {
+const Share = async ({ params }: { params: Promise<{ id: string }> }) => {
+      const { id } = await params
+      const { data } = await getVideo(id)
+      console.log(data)
       return (
-            <div>Share</div>
+            <div>{id}</div>
       )
 }
 

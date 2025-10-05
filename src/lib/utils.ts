@@ -32,4 +32,10 @@ export function issueJwt(user: JWTPayload & { avatar_url: string | null }) {
     );
 }
 
+export const handlePlay = () => {
+    const audio = new Audio(
+        "https://www.gstatic.com/meet/sounds/join_call_6a6a67d6bcc7a4e373ed40fdeff3930a.ogg"
+    );
+    audio.play().catch((err) => console.error("Playback failed:", err));
+};
 export { prisma };
