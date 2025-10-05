@@ -2,6 +2,8 @@
 
 import { prisma } from "@/lib/utils";
 import { auth } from "./auth.actions";
+import { error } from "console";
+import { revalidatePath } from "next/cache";
 
 interface Pagination {
     page?: number;
@@ -42,4 +44,30 @@ export const getVideo = async (id: string) => {
     });
 
     return { data: userVideo, error: null };
+};
+
+export const deleteVideo = async (id: string) => {
+    try {
+        const { data } = await auth();
+        if (!data) {
+            return { error: "UNAUTHORIZED", data: null, status: 401 };
+        }
+
+        const video = await prisma.video.findUnique({ where: { id } });
+        if (!video || video.userId !== data.sub) {
+            return {
+                error: "Video not found or unauthorized",
+                data: null,
+                status: 404,
+            };
+        }
+
+        await prisma.video.delete({ where: { id } });
+
+        revalidatePath("/library");
+        return { data: "Video deleted successfully", error: null, status: 200 };
+    } catch (err: any) {
+        console.error(err);
+        return { data: null, error: "Something went wrong", status: 500 };
+    }
 };

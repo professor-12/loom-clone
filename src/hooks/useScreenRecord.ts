@@ -1,5 +1,6 @@
 import { useState, useRef, useCallback } from "react";
 import useRecordingDuration from "./useDuration";
+import { handlePlay } from "@/lib/utils";
 
 const useScreenRecord = (upLoadStream: (a: Blob) => Promise<any>) => {
     const [cameraStream, setCameraStream] = useState<MediaStream | null>(null);
@@ -58,20 +59,19 @@ const useScreenRecord = (upLoadStream: (a: Blob) => Promise<any>) => {
         },
         [cameraStream]
     );
-    const startScreen = useCallback(async () => {
+    const startScreen = async () => {
         try {
             const stream = await navigator.mediaDevices.getDisplayMedia({
                 video: true,
                 audio: true,
             });
-            setScreenStream(stream);
+            setScreenStream(() => stream);
             return stream;
         } catch (err) {
             setIsNotpermitted(true);
             stopAll({ upload: false });
         }
-    }, []);
-
+    };
     const stopScreen = useCallback(() => {
         screenStream?.getTracks().forEach((track) => track.stop());
         setScreenStream(null);
@@ -88,6 +88,10 @@ const useScreenRecord = (upLoadStream: (a: Blob) => Promise<any>) => {
 
     // ⏺️ start recording (combines all available streams)
     const startRecording = useCallback(async () => {
+        const screenStream = await startScreen();
+        console.log(screenStream);
+        handlePlay();
+        await new Promise((a, b) => setTimeout(a, 700));
         const tracks: MediaStreamTrack[] = [
             // ...(cameraStream?.getTracks() || []),
             ...(micStream?.getTracks() || []),

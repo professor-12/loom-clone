@@ -3,6 +3,7 @@ import Header from './_components/header'
 import { Metadata } from 'next'
 import Tab from './_components/tab'
 import Video from './_components/Video'
+import Folders from './_components/Folders'
 
 export const metadata: Metadata = {
       title: "Video | Library | Loop"
@@ -19,7 +20,9 @@ const Page = async () => {
                                     <p className=''>6 videos</p>
                               </div>
                         </div>
+                        <Folders />
                         <div>
+                              {/* <Folders /> */}
                               <Video />
                         </div>
                   </div>

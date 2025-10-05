@@ -44,12 +44,15 @@ export const POST = async (req: NextRequest) => {
                 { start_offset: "3" },
             ],
         });
+        console.log(result, thumbnail);
         const video = await prisma.video.create({
             data: {
-                title: (result as any).display_name as string,
+                title: ("Loop | Free Screen & Video Recording Software -" +
+                    new Date().toLocaleString()) as string,
                 url: (result as any).secure_url,
                 userId: data?.sub!,
                 thumbnailUrl: thumbnail,
+                duration: (result as any).duration,
             },
         });
 

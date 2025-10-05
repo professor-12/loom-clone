@@ -8,7 +8,7 @@ import {
       MicOff,
       Pause,
       Play,
-      RotateCcw,
+
       Square,
       Video,
       VideoOff,
@@ -23,8 +23,8 @@ import { toast } from "sonner";
 
 import { useRouter } from "next/navigation";
 import OverLayay from "./overlay";
-import useRecordingDuration from "@/hooks/useDuration";
-import { handlePlay } from "@/lib/utils";
+import { motion } from "motion/react";
+import DeleteModal from "../modals/DeleteModal";
 
 const LoopVideoEngine = ({ onClose }: { onClose: () => void }) => {
       const { push } = useRouter();
@@ -33,10 +33,7 @@ const LoopVideoEngine = ({ onClose }: { onClose: () => void }) => {
       const [progress, setProgress] = useState(0);
       const [open, setOpen] = useState(false);
       const [abortController, setAbortController] = useState<AbortController | null>(null);
-      // const { startDuration, duration } = useRecordingDuration()
       const videoRef = useRef<HTMLVideoElement | null>(null);
-
-
 
       const {
             startRecording,
@@ -74,8 +71,6 @@ const LoopVideoEngine = ({ onClose }: { onClose: () => void }) => {
       useEffect(() => {
             startCamera();
             startMic();
-            startScreen();
-
             return () => {
                   stopAll({ upload: false });
                   if (abortController) abortController.abort();
@@ -125,7 +120,6 @@ const LoopVideoEngine = ({ onClose }: { onClose: () => void }) => {
             } finally {
                   setOpen(false);
                   setAbortController(null);
-
                   close();
             }
       }
@@ -138,7 +132,7 @@ const LoopVideoEngine = ({ onClose }: { onClose: () => void }) => {
       };
 
       const startRecordingSafely = async () => {
-            handlePlay()
+            // handlePlay()
             startRecording();
       };
 
@@ -150,7 +144,7 @@ const LoopVideoEngine = ({ onClose }: { onClose: () => void }) => {
       return (
             <>
                   {!recording && (
-                        <div>
+                        <div onClick={_ => close(false)}>
                               <OverLayay />
                         </div>
                   )}
@@ -160,7 +154,7 @@ const LoopVideoEngine = ({ onClose }: { onClose: () => void }) => {
                         progress={progress}
                   />
                   {!recording && !open && (
-                        <div className="fixed duration-150 transition-all text-muted z-20 w-[18rem] top-12 right-12 rounded-3xl p-4 bg-[#1F1F21]">
+                        <motion.div initial={{ x: "100%" }} animate={{ x: 0 }} className="fixed text-muted z-[99999999] w-[18rem] top-12 right-12 rounded-3xl p-4 bg-[#1F1F21]">
                               <div className="text-white/60 justify-between flex items-center">
                                     <X onClick={() => close(true)} className="cursor-pointer" aria-label="close overlay" />
                                     <Link href="/">
@@ -240,11 +234,11 @@ const LoopVideoEngine = ({ onClose }: { onClose: () => void }) => {
                               </div>
 
                               <p className="text-center text-xs text-muted/60 pt-3">5 min recording limits</p>
-                        </div>
+                        </motion.div>
                   )}
 
-                  <div className="fixed duration-150 transition-all gap-4 items-end text-muted flex z-20 min-w-[18rem] px-5 bottom-1 left-1 rounded-3xl p-4">
-                        <div className="w-[16rem] aspect-square bg-white overflow-hidden rounded-full">
+                  <div className="fixed z-[9999999] duration-150 transition-all gap-4 items-end text-muted flex  min-w-[18rem] px-5 bottom-1 left-1 rounded-3xl p-4">
+                        <motion.div animate={{ scale: 1 }} initial={{ scale: 0.2 }} transition={{ duration: .09 }} className="w-[20rem] aspect-square bg-white overflow-hidden rounded-full">
                               {cameraStream ? (
                                     <video
                                           muted
@@ -256,7 +250,7 @@ const LoopVideoEngine = ({ onClose }: { onClose: () => void }) => {
                               ) : (
                                     <div className="bg-primary flex-center w-full text-5xl font-bold h-full text-white">B</div>
                               )}
-                        </div>
+                        </motion.div>
 
                         <div className={`${!recording ? "bg-[#2C2C2E]/60" : "bg-[#1F1F21]"} flex px-3 space-x-4 py-3 h-12 rounded-2xl ring-4 ring-muted`}>
                               <Square
@@ -282,7 +276,7 @@ const LoopVideoEngine = ({ onClose }: { onClose: () => void }) => {
                               <h2 className="font-bold">{new Date(duration * 1000).toISOString().substr(14, 5)}</h2>
                               <Trash2 onClick={() => close(false)} className="cursor-pointer hover:stroke-accent" aria-label="delete/close" />
                         </div>
-                  </div>
+                  </div >
             </>
       );
 };

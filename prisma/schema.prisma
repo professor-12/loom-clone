@@ -30,6 +30,8 @@ model User {
 
   Integration Integration[]
   billing Billing? 
+
+  Folder Folder[]
 }
 
 model AuthProvider {
@@ -96,6 +98,23 @@ enum Visibility {
   PUBLIC
   UNLISTED
 }
+
+
+model Folder {
+  id        String   @id @default(uuid())
+  name      String
+  parentId  String?          @db.Uuid
+  userId    String           @db.Uuid
+  createdAt DateTime         @default(now())
+  updatedAt DateTime         @updatedAt
+
+  
+  parent    Folder?          @relation("FolderChildren", fields: [parentId], references: [id])
+  children  Folder[]         @relation("FolderChildren")
+
+  user      User             @relation(fields: [userId], references: [id])
+}
+
 
 model VideoShare {
   id        String   @id @default(uuid())

@@ -1,6 +1,6 @@
 import Dot from '@/components/LogoAnimation'
 import Man from '@/components/loop-recorder-extension/LoopEngine'
-import ScreenRecorder from '@/hooks/test'
+// import ScreenRecorder from '@/hooks/test'
 import React from 'react'
 
 const Notifications = () => {

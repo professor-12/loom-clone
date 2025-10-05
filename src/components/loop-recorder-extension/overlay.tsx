@@ -1,10 +1,14 @@
-import React from 'react'
+"use client";
+import React from "react";
+import { createPortal } from "react-dom";
 
-const OverLayay = () => {
+const Overlay = () => {
+      if (typeof window === "undefined") return null;
 
-      return (
-            <div className='fixed z-0 inset-0 bg-black/60 backdrop-blur-sm'></div>
-      )
-}
+      return createPortal(
+            <div className="fixed inset-0 bg-black/50 backdrop-blur-xs z-[9999]" />,
+            document.body
+      );
+};
 
-export default OverLayay
+export default Overlay;

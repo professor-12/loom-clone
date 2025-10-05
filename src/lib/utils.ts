@@ -3,6 +3,7 @@ import { clsx, type ClassValue } from "clsx";
 import { twMerge } from "tailwind-merge";
 import { JWTPayload } from "@/actions/auth.actions";
 import { PrismaClient } from "@prisma/client";
+import { toast } from "sonner";
 export const COOKIE_NAME = "jwt_token";
 const JWT_EXPIRES_IN = "7d";
 
@@ -39,3 +40,7 @@ export const handlePlay = () => {
     audio.play().catch((err) => console.error("Playback failed:", err));
 };
 export { prisma };
+
+export const copyToClipBoard = (text: string) => {
+    return navigator.clipboard.writeText(text);
+};
