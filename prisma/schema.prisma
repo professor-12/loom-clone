@@ -103,8 +103,8 @@ enum Visibility {
 model Folder {
   id        String   @id @default(uuid())
   name      String
-  parentId  String?          @db.Uuid
-  userId    String           @db.Uuid
+  parentId  String?          
+  userId    String           
   createdAt DateTime         @default(now())
   updatedAt DateTime         @updatedAt
 
