@@ -1,6 +1,11 @@
 "use server";
 
-import { GoogleServices, signInWithGoogle } from "@/services/auth.service";
+import {
+    GithubService,
+    GoogleServices,
+    signInWithGithub,
+    signInWithGoogle,
+} from "@/services/auth.service";
 import { cookies } from "next/headers";
 import jwt from "jsonwebtoken";
 import { redirect } from "next/navigation";
@@ -27,6 +32,41 @@ export async function signInWithGoogleAction(code: string) {
         name,
         emailVerified: verified_email,
         image: picture,
+        provider: "google",
+        providerUserId: id,
+    });
+
+    if (!user) {
+        throw new Error("Failed to create User");
+    }
+
+    const token = issueJwt({
+        email: user.email,
+        sub: user.id,
+        avatar_url: user.avatarUrl,
+    });
+
+    (await cookies()).set("jwt_token", token, {
+        httpOnly: true,
+        sameSite: "lax",
+        secure: process.env.NODE_ENV === "production",
+        maxAge: 7 * 24 * 60 * 60,
+        path: "/",
+    });
+}
+export async function signInWithGithubAction(code: string) {
+    const github = new GithubService();
+    const { access_token, token_type, scope } = await github.getTokens(code);
+    const { email, name, avatar_url, verified_email, id } =
+        await github.getUserInfo(access_token);
+
+    const user = await signInWithGithub({
+        accessToken: access_token,
+        refreshToken: access_token,
+        email,
+        name,
+        emailVerified: verified_email,
+        image: avatar_url,
         provider: "google",
         providerUserId: id,
     });

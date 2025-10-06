@@ -44,3 +44,5 @@ export { prisma };
 export const copyToClipBoard = (text: string) => {
     return navigator.clipboard.writeText(text);
 };
+
+export const githubOAUTHLINK = `https://github.com/login/oauth/authorize?client_id=${process.env.NEXT_PUBLIC_GITHUB_CLIENT_ID}&redirect_uri=${process.env.NEXT_PUBLIC_GITHUB_CALLBACK_URL}&scope=read:user user:email&state=RANDOM_STRING`;

@@ -1,5 +1,6 @@
 // "use client"
 import { Button } from '@/components/ui/button'
+import { githubOAUTHLINK } from '@/lib/utils'
 import { Infinity } from 'lucide-react'
 import Image from 'next/image'
 import Link from 'next/link'
@@ -30,7 +31,7 @@ const Page = () => {
 
                                     </Button>
                               </Link>
-                              <Link href={`/signup`} className='block font-bold w-full'>
+                              <Link href={githubOAUTHLINK} className='block font-bold w-full'>
                                     <Button variant={"outline"} className='w-full rounded-3xl flex items-center h-15'>
                                           <Image width={200} height={200} className='w-6 h-6' src="/github.png" alt="" />
                                           <span className='font-bold'>
