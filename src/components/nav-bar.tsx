@@ -21,7 +21,7 @@ const NavBar = () => {
                                           <Link href={"/signup"}>
                                                 <Button size={"xl"} className='rounded-full text-[14px] h-[3.5rem] border-4 border-light-foreground hover:translate-0.5 hover:-translate-y-0.5 hover:scale-105 p-4  shadow-primary hover:shadow-[10rem] bg-[#565ADD]  duration-100 text-white'> Get Loop For Free</Button>
                                           </Link>
-                                          <Button variant={"secondary"} size={"sm"} className='rounded-full text-[15px] px-4 h-12 py-5'>Contact Sales</Button>
+      
                                     </div>
                               </div>
                               {/* Mobile */}
