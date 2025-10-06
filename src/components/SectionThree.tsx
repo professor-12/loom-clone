@@ -1,6 +1,7 @@
 import Image from 'next/image'
 import Link from 'next/link'
 import React from 'react'
+import Features from './features'
 
 const SectionThree = () => {
       return (
@@ -33,11 +34,7 @@ const SectionThree = () => {
                               </div>
                         </div>
                   </div>
-                  <div className='w-full space-y-4 text-white py-24 bg-black md:rounded-[45px] p-4 mx-auto md:max-w-[95%]'>
-                        <h1 className='text-white text-4xl font-bold text-center'>Keep your content safe</h1>
-                        <p className='font-medium mt-5 text-center xl:max-w-3xl max-w-2xl text-xl md:text-2xl mx-auto'>Enterprise-grade security to keep your data and your customer’s data private and secure. We offer SSO, SCIM as well as custom data retention policies and privacy settings.</p>
-
-                  </div>
+                  <Features />
             </div>
       )
 }

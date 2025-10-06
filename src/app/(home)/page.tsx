@@ -1,3 +1,4 @@
+import Features from '@/components/features'
 import HeroSection from '@/components/hero-section'
 import SecondHero from '@/components/SecondHero'
 import SectionThree from '@/components/SectionThree'
@@ -10,6 +11,7 @@ const Home = async () => {
       <HeroSection />
       <SecondHero />
       <SectionThree />
+      {/* <Features /> */}
     </main>
   )
 }

@@ -4,7 +4,7 @@ import { Download } from "lucide-react"
 import Link from 'next/link'
 const HeroSection = () => {
       return (
-            <div className='w-full px-4 bg-light-foreground min-h-[100dvh] flex py-20 md:py-28 pb-20 gap-6 items-center justify-center flex-col'>
+            <div className='w-full px-4  min-h-[100dvh] flex py-20 md:py-28 pb-20 gap-6 items-center justify-center flex-col'>
                   <h1 className='md:text-6xl text-4xl text-dark-primary-foreground text-center md:text-[67.3077px] font-extrabold tracking-tighter'>One video is worth a thousand words</h1>
                   <p className=' text-[#3d2e7c] text-xl md:text-[27.4615px] max-w-[840.154px] text-balance text-center '>Easily record and share AI-powered video messages with your teammates and customers to supercharge productivity</p>
                   <div className='flex items-center max-sm:flex-col pt-6 gap-5'>
