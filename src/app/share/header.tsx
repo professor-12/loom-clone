@@ -10,6 +10,8 @@ import { CiSearch } from "react-icons/ci";
 import { RiUser6Fill } from "react-icons/ri";
 import { User, Video } from '@prisma/client';
 import CopyButton from './components/CopyButton';
+import SideBar from '@/components/side-bar';
+import MobileSideBar from '@/components/mobile-sidebar';
 
 interface HeaderDetailProps {
       data: Video & { user: User }
@@ -22,21 +24,23 @@ const HeaderDetail = async ({ data }: HeaderDetailProps) => {
       return (
             <div className='bg-white  border-b  p-6  flex items-center justify-between'>
                   <div className='flex items-center gap-6'>
-                        <IoIosMenu className='w-8 h-12' />
-                        <Logo />
-                        <div>
-                              <h1 className='font-semibold text-3xl max-w-[200px] truncate'>{data.title}</h1>
-                              <p className='text-gray-500'>{user.name}</p>
+                        <MobileSideBar className='!block' />
+                        <div className='max-md:hidden'>
+                              <Logo />
+                        </div>
+                        <div className='max-md:hidden'>
+                              <h1 className='font-semibold text-2xl max-w-[200px] truncate'>{data.title}</h1>
+                              <p className='text-gray-500 text-sm'>{user.name}</p>
                         </div>
                   </div>
                   <div className='flex gap-6 items-center'>
-                        <div className='font-semibold flex items-center gap-2'>
+                        <div className='font-semibold flex items-center gap-2 max-md:hidden'>
                               <RiUser6Fill />
                               123,456 views
                         </div>
-                        <div className='flex gap-[1px] font-semibold'>
-                              <div className='bg-[#1558BC] cursor-pointer flex items-center gap-2 text-white px-4 p-2 rounded-l-2xl'>
-                                    <RiUserAddLine className='h-6 w-6' />Share
+                        <div className='flex max-md:text-sm gap-[1px] font-semibold'>
+                              <div className='bg-[#1558BC] cursor-pointer flex items-center gap-2 text-white md:px-4 p-2 rounded-l-2xl'>
+                                    <RiUserAddLine className='md:h-6 md:w-6' />Share
                               </div>
                               <CopyButton />
 
