@@ -9,6 +9,7 @@ import { IoIosNotificationsOutline } from "react-icons/io";
 import { CiSearch } from "react-icons/ci";
 import { RiUser6Fill } from "react-icons/ri";
 import { User, Video } from '@prisma/client';
+import CopyButton from './components/CopyButton';
 
 interface HeaderDetailProps {
       data: Video & { user: User }
@@ -37,8 +38,8 @@ const HeaderDetail = async ({ data }: HeaderDetailProps) => {
                               <div className='bg-[#1558BC] cursor-pointer flex items-center gap-2 text-white px-4 p-2 rounded-l-2xl'>
                                     <RiUserAddLine className='h-6 w-6' />Share
                               </div>
-                              <div className='bg-[#1558BC] cursor-pointer text-white p-2 px-3 rounded-r-2xl items-center justify-center flex'><RiLinkM className='h-6 w-6' />
-                              </div>
+                              <CopyButton />
+
                         </div>
                         <CiSearch className='h-8 w-8 stroke-[0.3]' />
                         <IoIosNotificationsOutline className='h-8 w-8' />

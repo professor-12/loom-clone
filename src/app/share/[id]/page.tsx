@@ -26,8 +26,8 @@ const Share = async ({ params }: { params: Promise<{ id: string }> }) => {
       return (
             <div>
                   <HeaderDetail data={data as any} />
-                  <main className='p-6 flex'>
-                        <div className='flex-[2.5] px-24'>
+                  <main className='p-6 max-lg:flex-col flex'>
+                        <div className='md:flex-[2] lg:flex-[2.5] md:px-24'>
                               <VideoPlayer src={data!.url} />
                         </div>
                         <div className='flex-1'>
