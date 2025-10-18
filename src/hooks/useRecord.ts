@@ -24,9 +24,7 @@ const useRecord = (stream: MediaStream | null): UseRecordResult => {
         if (!stream) return;
         if (isRecording) return;
 
-        const recorder = new MediaRecorder(stream, {
-            // mimeType: "video/webm;codecs=vp9,opus",
-        });
+        const recorder = new MediaRecorder(stream, {});
         mediaRecorderRef.current = recorder;
         setChunks([]);
         setHasFinished(false);

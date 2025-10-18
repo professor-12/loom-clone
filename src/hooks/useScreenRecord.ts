@@ -65,7 +65,7 @@ const useScreenRecord = (upLoadStream: (a: Blob) => Promise<any>) => {
                 video: true,
                 audio: true,
             });
-            setScreenStream(() => stream);
+            setScreenStream(stream);
             return stream;
         } catch (err) {
             setIsNotpermitted(true);
@@ -86,7 +86,6 @@ const useScreenRecord = (upLoadStream: (a: Blob) => Promise<any>) => {
         [screenStream]
     );
 
-    // ⏺️ start recording (combines all available streams)
     const startRecording = useCallback(async () => {
         const screenStream = await startScreen();
         console.log(screenStream);
