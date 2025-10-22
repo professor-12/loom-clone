@@ -8,6 +8,9 @@ importers:
 
   .:
     dependencies:
+      '@ffmpeg/ffmpeg':
+        specifier: ^0.12.15
+        version: 0.12.15
       '@lottiefiles/dotlottie-react':
         specifier: ^0.17.3
         version: 0.17.3(react@19.1.0)
@@ -170,6 +173,14 @@ packages:
   '@eslint/plugin-kit@0.3.5':
     resolution: {integrity: sha512-Z5kJ+wU3oA7MMIqVR9tyZRtjYPr4OC004Q4Rw7pgOKUOKkJfZ3O24nz3WYfGRpMDNmcOi3TwQOmgm7B7Tpii0w==}
     engines: {node: ^18.18.0 || ^20.9.0 || >=21.1.0}
+
+  '@ffmpeg/ffmpeg@0.12.15':
+    resolution: {integrity: sha512-1C8Obr4GsN3xw+/1Ww6PFM84wSQAGsdoTuTWPOj2OizsRDLT4CXTaVjPhkw6ARyDus1B9X/L2LiXHqYYsGnRFw==}
+    engines: {node: '>=18.x'}
+
+  '@ffmpeg/types@0.12.4':
+    resolution: {integrity: sha512-k9vJQNBGTxE5AhYDtOYR5rO5fKsspbg51gbcwtbkw2lCdoIILzklulcjJfIDwrtn7XhDeF2M+THwJ2FGrLeV6A==}
+    engines: {node: '>=16.x'}
 
   '@hexagon/base64@1.1.28':
     resolution: {integrity: sha512-lhqDEAvWixy3bZ+UOYbPwUbBkwBq5C1LAJ/xPC8Oi+lL54oyakv/npbA0aU2hgCsx/1NUd4IBvV03+aUBWxerw==}
@@ -2612,6 +2623,12 @@ snapshots:
     dependencies:
       '@eslint/core': 0.15.2
       levn: 0.4.1
+
+  '@ffmpeg/ffmpeg@0.12.15':
+    dependencies:
+      '@ffmpeg/types': 0.12.4
+
+  '@ffmpeg/types@0.12.4': {}
 
   '@hexagon/base64@1.1.28': {}
 
