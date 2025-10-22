@@ -3,39 +3,65 @@ import cloudinary from "cloudinary";
 import { prisma } from "@/lib/utils";
 import { auth } from "@/actions/auth.actions";
 
+async function uploadWithRetry(
+    buffer: Buffer,
+    options: cloudinary.UploadApiOptions,
+    retries = 3,
+    delay = 1000
+): Promise<any> {
+    for (let attempt = 1; attempt <= retries; attempt++) {
+        try {
+            const result = await new Promise((resolve, reject) => {
+                const uploadStream = cloudinary.v2.uploader.upload_stream(
+                    options,
+                    (error, result) => {
+                        if (error) reject(error);
+                        else resolve(result);
+                    }
+                );
+                uploadStream.end(buffer);
+            });
+
+            return result;
+        } catch (error: any) {
+            console.warn(
+                `Cloudinary upload failed (attempt ${attempt}/${retries}):`,
+                error.message
+            );
+
+            if (attempt === retries) {
+                throw new Error(`Upload failed after ${retries} attempts`);
+            }
+            await new Promise((res) => setTimeout(res, delay * attempt));
+        }
+    }
+}
+
 export const POST = async (req: NextRequest) => {
     const { data } = await auth();
     if (!data) {
         return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
     }
+
     try {
         const form = await req.formData();
         const file = form.get("file") as File;
-        if (!file)
+        if (!file) {
             return NextResponse.json(
                 { error: "No file uploaded" },
                 { status: 400 }
             );
+        }
 
         const arrayBuffer = await file.arrayBuffer();
         const buffer = Buffer.from(arrayBuffer);
 
-        // Upload to Cloudinary using stream
-        const result = await new Promise((resolve, reject) => {
-            const uploadStream = cloudinary.v2.uploader.upload_stream(
-                {
-                    resource_type: "video",
-                    folder: "video",
-                    quality_analysis: true,
-                },
-                (error, result) => {
-                    if (error) reject(error);
-                    else resolve(result);
-                }
-            );
-
-            uploadStream.end(buffer);
+        const result = await uploadWithRetry(buffer, {
+            resource_type: "video",
+            folder: "video",
+            quality_analysis: true,
         });
+
         const thumbnail = cloudinary.v2.url((result as any).public_id, {
             resource_type: "video",
             format: "jpg",
@@ -44,13 +70,12 @@ export const POST = async (req: NextRequest) => {
                 { start_offset: "3" },
             ],
         });
-        console.log(result, thumbnail);
-        const video = await prisma.video.create({
+
+        await prisma.video.create({
             data: {
-                title: ("Loop | Free Screen & Video Recording Software -" +
-                    new Date().toLocaleString()) as string,
+                title: `Loop | Free Screen & Video Recording Software - ${new Date().toLocaleString()}`,
                 url: (result as any).secure_url,
-                userId: data?.sub!,
+                userId: data.sub!,
                 thumbnailUrl: thumbnail,
                 duration: (result as any).duration,
             },
@@ -58,7 +83,7 @@ export const POST = async (req: NextRequest) => {
 
         return NextResponse.json({ message: "File uploaded" }, { status: 200 });
     } catch (error: any) {
-        console.error(error);
+        console.error("Upload handler failed:", error);
         return NextResponse.json({ error: error.message }, { status: 500 });
     }
 };
