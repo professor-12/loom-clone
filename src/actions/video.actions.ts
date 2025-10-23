@@ -30,10 +30,6 @@ export const getVideos = async ({ page = 1, limit = 10 }: Pagination) => {
 };
 
 export const getVideo = async (id: string) => {
-    const { data } = await auth();
-    if (!data) {
-        return { error: "UNAUTHORIZED", data: null };
-    }
     const userVideo = await prisma.video.findUnique({
         where: {
             id,
