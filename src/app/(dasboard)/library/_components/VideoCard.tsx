@@ -47,7 +47,7 @@ export const VideoCard = (props: Video & { user: User }) => {
                     />
                     <div
                         onClick={async () => {
-                            copyToClipBoard(url)
+                            copyToClipBoard(`${location.origin}/share/${id}`)
                                 .then((e) => {
                                     toast.success("Link copied successfully");
                                 })
@@ -61,7 +61,7 @@ export const VideoCard = (props: Video & { user: User }) => {
                     </div>
                     <div
                         onClick={async () => {
-                            copyToClipBoard(url)
+                            copyToClipBoard(`${location.origin}/share/${id}`)
                                 .then((e) => {
                                     toast.success("Link copied successfully");
                                 })
