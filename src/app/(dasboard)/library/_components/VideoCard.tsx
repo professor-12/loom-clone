@@ -9,9 +9,15 @@ import { FaRegSmile } from "react-icons/fa";
 import { LuEye } from "react-icons/lu";
 import { RiLinkM } from "react-icons/ri";
 import { toast } from "sonner";
-import { PiDotsThreeBold } from "react-icons/pi";
 import { deleteVideo } from "@/actions/video.actions";
-export const VideoCard = (props: Video & { user: User }) => {
+import MoveVideoMenu from "./MoveVideoMenu";
+
+type VideoCardProps = Video & {
+    user: User;
+    folder?: { id: string; name: string } | null;
+};
+
+export const VideoCard = (props: VideoCardProps) => {
     const {
         description,
         title,
@@ -21,6 +27,8 @@ export const VideoCard = (props: Video & { user: User }) => {
         userId,
         duration,
         visibility,
+        folderId,
+        folder,
         user: { name, avatarUrl },
     } = props;
     return (
@@ -59,21 +67,11 @@ export const VideoCard = (props: Video & { user: User }) => {
                     >
                         <RiLinkM />
                     </div>
-                    <div
-                        onClick={async () => {
-                            copyToClipBoard(`${location.origin}/share/${id}`)
-                                .then((e) => {
-                                    toast.success("Link copied successfully");
-                                })
-                                .catch((e) => {
-                                    toast.error("Failed to copy text");
-                                });
-                        }}
-                        className="cursor-pointer p-1 bg-white rounded-md"
-                    >
-                        {/* <RiLinkM /> */}
-                        <PiDotsThreeBold />
-                    </div>
+                    <MoveVideoMenu
+                        videoId={id}
+                        currentFolderId={folderId ?? null}
+                        currentlyInLabel={folder?.name ?? "Library"}
+                    />
                 </div>
                 <div className="bg-black/40 z-0 group-hover:bg-black/70 absolute inset-0"></div>
                 <Image

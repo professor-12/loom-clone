@@ -1,7 +1,7 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { useState, useTransition } from "react";
+import { useEffect, useState, useTransition } from "react";
 import { BsThreeDots } from "react-icons/bs";
 import {
     Dialog,
@@ -13,9 +13,20 @@ import {
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import DropDown from "@/components/ui/drop-down";
-import { renameFolder, deleteFolder } from "@/actions/folder.action";
+import {
+    renameFolder,
+    deleteFolder,
+    moveFolder,
+    createFolderAction,
+    getFolderMoveListForFolderMove,
+    getFolderParentLocationLabel,
+} from "@/actions/folder.action";
+import type { FolderMoveListItem } from "@/actions/folder.action";
 import { toast } from "sonner";
-import { Pencil, Trash2 } from "lucide-react";
+import { Pencil, Trash2, ArrowRightLeft } from "lucide-react";
+import MoveWithinLibraryModal, {
+    type MoveDestination,
+} from "./MoveWithinLibraryModal";
 
 type Props = {
     folderId: string;
@@ -35,8 +46,45 @@ export default function FolderMoreMenu({
     const router = useRouter();
     const [renameOpen, setRenameOpen] = useState(false);
     const [deleteOpen, setDeleteOpen] = useState(false);
+    const [moveOpen, setMoveOpen] = useState(false);
+    const [moveFolders, setMoveFolders] = useState<FolderMoveListItem[]>([]);
+    const [moveFoldersLoading, setMoveFoldersLoading] = useState(false);
+    const [moveListKey, setMoveListKey] = useState(0);
+    const [moveSelected, setMoveSelected] = useState<MoveDestination>("pick");
+    const [moveCurrentlyIn, setMoveCurrentlyIn] = useState("Library");
     const [newName, setNewName] = useState(folderName);
     const [pending, startTransition] = useTransition();
+    const [movePending, startMoveOnly] = useTransition();
+    const [createPending, startCreateOnly] = useTransition();
+
+    useEffect(() => {
+        if (!moveOpen) {
+            setMoveFoldersLoading(false);
+            return;
+        }
+        let cancelled = false;
+        setMoveFoldersLoading(true);
+        (async () => {
+            try {
+                const [listRes, labelRes] = await Promise.all([
+                    getFolderMoveListForFolderMove(folderId),
+                    getFolderParentLocationLabel(folderId),
+                ]);
+                if (cancelled) return;
+                if (listRes.error === null && listRes.data) {
+                    setMoveFolders(listRes.data);
+                }
+                if (labelRes.error === null && labelRes.data) {
+                    setMoveCurrentlyIn(labelRes.data);
+                }
+            } finally {
+                if (!cancelled) setMoveFoldersLoading(false);
+            }
+        })();
+        return () => {
+            cancelled = true;
+        };
+    }, [moveOpen, moveListKey, folderId]);
 
     const runRename = () => {
         startTransition(async () => {
@@ -65,6 +113,45 @@ export default function FolderMoreMenu({
             } else {
                 router.refresh();
             }
+        });
+    };
+
+    const openMove = () => {
+        setMoveSelected("pick");
+        setMoveOpen(true);
+    };
+
+    const parentForNewFolder = (): string | null => {
+        if (moveSelected === "pick" || moveSelected === "root") return null;
+        return moveSelected;
+    };
+
+    const handleMoveCreateFolder = () => {
+        startCreateOnly(async () => {
+            const res = await createFolderAction(parentForNewFolder());
+            if (res.error) {
+                if (res.status === 401) toast.error("Unauthorized");
+                else toast.error("Could not create folder");
+                return;
+            }
+            toast.success("Folder created");
+            setMoveListKey((k) => k + 1);
+            router.refresh();
+        });
+    };
+
+    const runMove = () => {
+        if (moveSelected === "pick") return;
+        const newParentId = moveSelected === "root" ? null : moveSelected;
+        startMoveOnly(async () => {
+            const res = await moveFolder(folderId, newParentId);
+            if (res.error) {
+                toast.error(res.error);
+                return;
+            }
+            toast.success("Folder moved");
+            setMoveOpen(false);
+            router.refresh();
         });
     };
 
@@ -105,6 +192,16 @@ export default function FolderMoreMenu({
                             >
                                 <Pencil className="size-4" />
                                 Rename
+                            </button>
+                        </li>
+                        <li>
+                            <button
+                                type="button"
+                                className="hover:bg-muted flex w-full items-center gap-2 rounded-md px-3 py-2 text-left"
+                                onClick={openMove}
+                            >
+                                <ArrowRightLeft className="size-4" />
+                                Move to…
                             </button>
                         </li>
                         <li>
@@ -168,6 +265,20 @@ export default function FolderMoreMenu({
                     </DialogFooter>
                 </DialogContent>
             </Dialog>
+
+            <MoveWithinLibraryModal
+                open={moveOpen}
+                onOpenChange={setMoveOpen}
+                currentlyInLabel={moveCurrentlyIn}
+                folders={moveFolders}
+                selected={moveSelected}
+                onSelect={setMoveSelected}
+                onMove={runMove}
+                onCreateFolder={handleMoveCreateFolder}
+                pendingMove={movePending}
+                pendingCreate={createPending}
+                foldersLoading={moveFoldersLoading}
+            />
 
             <Dialog open={deleteOpen} onOpenChange={setDeleteOpen}>
                 <DialogContent className="!rounded-2xl sm:max-w-md">
