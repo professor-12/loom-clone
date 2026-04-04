@@ -83,8 +83,10 @@ model Video {
   duration       Int?         // in seconds
   visibility     Visibility   @default(PRIVATE)
   userId         String
+  folderId       String?
   workspaceId    String?
   user           User         @relation(fields: [userId], references: [id])
+  folder         Folder?      @relation(fields: [folderId], references: [id])
   workspace      Workspace?   @relation(fields: [workspaceId], references: [id])
   comments       Comment[]
   shares         VideoShare[]
@@ -108,11 +110,13 @@ model Folder {
   createdAt DateTime         @default(now())
   updatedAt DateTime         @updatedAt
 
-  
+  videos    Video[]
   parent    Folder?          @relation("FolderChildren", fields: [parentId], references: [id])
   children  Folder[]         @relation("FolderChildren")
 
   user      User             @relation(fields: [userId], references: [id])
+
+  @@index([userId, parentId])
 }
 
 

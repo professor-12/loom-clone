@@ -8,8 +8,9 @@ import { revalidatePath } from "next/cache";
 interface Pagination {
     page?: number;
     limit?: number;
+    folderId?: string;
 }
-export const getVideos = async ({ page = 1, limit = 10 }: Pagination) => {
+export const getVideos = async ({ page = 1, limit = 10, folderId }: Pagination) => {
     const { data } = await auth();
     if (!data) {
         return { error: "UNAUTHORIZED", data: null };
@@ -17,13 +18,13 @@ export const getVideos = async ({ page = 1, limit = 10 }: Pagination) => {
 
     const [userVideos, total] = await Promise.all([
         prisma.video.findMany({
-            where: { userId: data.sub },
+            where: { userId: data.sub, folderId: folderId },
             include: { user: true },
             orderBy: { createdAt: "desc" },
             take: limit,
             skip: limit * (page - 1),
         }),
-        prisma.video.count({ where: { userId: data.sub } }),
+        prisma.video.count({ where: { userId: data.sub, folderId: folderId } }),
     ]);
 
     return { data: userVideos, total, error: null };
