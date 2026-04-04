@@ -81,6 +81,11 @@ model Video {
   url            String       // Cloud storage (S3, Cloudflare R2, etc.)
   thumbnailUrl   String?
   duration       Int?         // in seconds
+  /** Cloudinary public_id for derived assets (e.g. audio for transcription). */
+  cloudinaryPublicId String?
+  transcript         String?         @db.Text
+  transcriptStatus   TranscriptStatus @default(NONE)
+  transcriptError    String?
   visibility     Visibility   @default(PRIVATE)
   userId         String
   folderId       String?
@@ -99,6 +104,13 @@ enum Visibility {
   WORKSPACE
   PUBLIC
   UNLISTED
+}
+
+enum TranscriptStatus {
+  NONE
+  PENDING
+  READY
+  FAILED
 }
 
 

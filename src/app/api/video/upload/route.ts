@@ -1,7 +1,9 @@
 import { NextRequest, NextResponse } from "next/server";
+import { after } from "next/server";
 import cloudinary from "cloudinary";
 import { prisma } from "@/lib/utils";
 import { auth } from "@/actions/auth.actions";
+import { runVideoTranscriptionJob } from "@/lib/transcription/run-video-transcription";
 
 async function uploadWithRetry(
     buffer: Buffer,
@@ -86,16 +88,34 @@ export const POST = async (req: NextRequest) => {
             ],
         });
 
-        await prisma.video.create({
+        const uploadResult = result as {
+            secure_url: string;
+            public_id: string;
+            duration?: number;
+        };
+
+        const scheduleTranscription = Boolean(process.env.OPENAI_API_KEY);
+
+        const video = await prisma.video.create({
             data: {
                 title: `Loop | Free Screen & Video Recording Software - ${new Date().toLocaleString()}`,
-                url: (result as any).secure_url,
+                url: uploadResult.secure_url,
                 userId: data.sub!,
                 thumbnailUrl: thumbnail,
-                duration: (result as any).duration,
+                duration: uploadResult.duration,
                 folderId,
+                cloudinaryPublicId: uploadResult.public_id,
+                transcriptStatus: scheduleTranscription ? "PENDING" : "NONE",
             },
         });
+
+        if (scheduleTranscription) {
+            after(() =>
+                runVideoTranscriptionJob(video.id).catch((err) =>
+                    console.error("[transcription] background job error", err)
+                )
+            );
+        }
 
         return NextResponse.json({ message: "File uploaded" }, { status: 200 });
     } catch (error: any) {
