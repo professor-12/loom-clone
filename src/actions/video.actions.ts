@@ -2,8 +2,8 @@
 
 import { prisma } from "@/lib/utils";
 import { auth } from "./auth.actions";
-import { error } from "console";
 import { revalidatePath } from "next/cache";
+import type { Prisma } from "@prisma/client";
 
 interface Pagination {
     page?: number;
@@ -16,15 +16,20 @@ export const getVideos = async ({ page = 1, limit = 10, folderId }: Pagination) 
         return { error: "UNAUTHORIZED", data: null };
     }
 
+    const where: Prisma.VideoWhereInput = { userId: data.sub };
+    if (folderId !== undefined) {
+        where.folderId = folderId;
+    }
+
     const [userVideos, total] = await Promise.all([
         prisma.video.findMany({
-            where: { userId: data.sub, folderId: folderId },
+            where,
             include: { user: true },
             orderBy: { createdAt: "desc" },
             take: limit,
             skip: limit * (page - 1),
         }),
-        prisma.video.count({ where: { userId: data.sub, folderId: folderId } }),
+        prisma.video.count({ where }),
     ]);
 
     return { data: userVideos, total, error: null };

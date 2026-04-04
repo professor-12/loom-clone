@@ -53,6 +53,21 @@ export const POST = async (req: NextRequest) => {
             );
         }
 
+        const folderIdRaw = form.get("folderId");
+        let folderId: string | null = null;
+        if (typeof folderIdRaw === "string" && folderIdRaw.length > 0) {
+            const folder = await prisma.folder.findFirst({
+                where: { id: folderIdRaw, userId: data.sub! },
+            });
+            if (!folder) {
+                return NextResponse.json(
+                    { error: "Invalid folder" },
+                    { status: 400 }
+                );
+            }
+            folderId = folderIdRaw;
+        }
+
         const arrayBuffer = await file.arrayBuffer();
         const buffer = Buffer.from(arrayBuffer);
 
@@ -78,6 +93,7 @@ export const POST = async (req: NextRequest) => {
                 userId: data.sub!,
                 thumbnailUrl: thumbnail,
                 duration: (result as any).duration,
+                folderId,
             },
         });
 

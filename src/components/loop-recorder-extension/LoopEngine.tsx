@@ -26,7 +26,13 @@ import OverLayay from "./overlay";
 import { motion } from "motion/react";
 import DeleteModal from "../modals/DeleteModal";
 
-const LoopVideoEngine = ({ onClose }: { onClose: () => void }) => {
+const LoopVideoEngine = ({
+      onClose,
+      folderId = null,
+}: {
+      onClose: () => void;
+      folderId?: string | null;
+}) => {
       const { push } = useRouter();
       const [useCamera, setUseCamera] = useState(true);
       const [useMicrophone, setUseMicrophone] = useState(true);
@@ -92,6 +98,9 @@ const LoopVideoEngine = ({ onClose }: { onClose: () => void }) => {
 
             const formData = new FormData();
             formData.append("file", finalStream, "recording.webm");
+            if (folderId) {
+                  formData.append("folderId", folderId);
+            }
 
             const controller = new AbortController();
             setAbortController(controller);
@@ -108,7 +117,7 @@ const LoopVideoEngine = ({ onClose }: { onClose: () => void }) => {
 
                   setProgress(100);
                   toast.success("Video uploaded successfully");
-                  push("/library");
+                  push(folderId ? `/f/${folderId}` : "/library");
             } catch (err: any) {
                   if (err?.code === "ERR_CANCELED" || err?.name === "CanceledError") {
                         console.log("Upload canceled");

@@ -1,18 +1,11 @@
-import { assertFolderAccess } from "@/actions/folder.action";
-import LibraryView from "../../_components/LibraryView";
-import { Metadata } from "next";
+import { redirect } from "next/navigation";
 
 type Props = {
     params: Promise<{ folderId: string }>;
 };
 
-export const metadata: Metadata = {
-    title: "Folder | Library | Loop",
-};
-
-export default async function LibraryFolderPage({ params }: Props) {
+/** Canonical folder URLs use `/f/[folderId]`. */
+export default async function LibraryFolderRedirect({ params }: Props) {
     const { folderId } = await params;
-    await assertFolderAccess(folderId);
-    return <LibraryView folderId={folderId} />;
+    redirect(`/f/${folderId}`);
 }
-

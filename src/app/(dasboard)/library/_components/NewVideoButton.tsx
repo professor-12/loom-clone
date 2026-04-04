@@ -2,21 +2,71 @@
 import LoopVideoEngine from "@/components/loop-recorder-extension/LoopEngine";
 import { Button } from "@/components/ui/button";
 import DropDown from "@/components/ui/drop-down";
-import useScreenRecord from "@/hooks/useScreenRecord";
 import { Upload, Video } from "lucide-react";
-import React, { useState } from "react";
+import React, { useRef, useState } from "react";
 import { PiCaretDownBold } from "react-icons/pi";
+import axios from "axios";
+import { toast } from "sonner";
+import { useRouter } from "next/navigation";
 
-const NewVideoButton = () => {
-    const [state, setState] = useState(false);
+type Props = {
+    folderId?: string | null;
+};
+
+const NewVideoButton = ({ folderId = null }: Props) => {
+    const [recordOpen, setRecordOpen] = useState(false);
+    const [uploading, setUploading] = useState(false);
+    const fileRef = useRef<HTMLInputElement>(null);
+    const router = useRouter();
+
+    const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+        const file = e.target.files?.[0];
+        e.target.value = "";
+        if (!file) return;
+
+        setUploading(true);
+        const formData = new FormData();
+        formData.append("file", file);
+        if (folderId) {
+            formData.append("folderId", folderId);
+        }
+        try {
+            await axios.post("/api/video/upload", formData, {
+                headers: { "Content-Type": "multipart/form-data" },
+            });
+            toast.success("Video uploaded");
+            router.refresh();
+            if (folderId) {
+                router.push(`/f/${folderId}`);
+            } else {
+                router.push("/library");
+            }
+        } catch (err) {
+            console.error(err);
+            toast.error("Upload failed");
+        } finally {
+            setUploading(false);
+        }
+    };
+
     return (
-        <div className="">
+        <div>
+            <input
+                ref={fileRef}
+                type="file"
+                accept="video/*"
+                className="hidden"
+                onChange={handleFileChange}
+            />
             <DropDown>
                 <DropDown.Trigger>
-                    <Button className="font-bold text-sm rounded-xl">
-                        <span>New Video</span>
+                    <Button
+                        className="text-sm font-bold"
+                        disabled={uploading}
+                    >
+                        <span>{uploading ? "Uploading…" : "New Video"}</span>
                         <span>
-                            <PiCaretDownBold className="text-white text-xl font-bold" />
+                            <PiCaretDownBold className="text-xl font-bold text-white" />
                         </span>
                     </Button>
                 </DropDown.Trigger>
@@ -24,23 +74,29 @@ const NewVideoButton = () => {
                     <ul className="font-poppins">
                         <DropDown.Trigger>
                             <li
-                                onClick={() => {
-                                    setState(true);
-                                }}
-                                className="p-3 px-4 flex gap-2 hover:bg-slate-400/20 rounded-2xl cursor-pointer"
+                                onClick={() => setRecordOpen(true)}
+                                className="flex cursor-pointer gap-2 rounded-2xl p-3 px-4 hover:bg-slate-400/20"
                             >
                                 <Video strokeWidth="1.4" />
                                 Record a video
                             </li>
                         </DropDown.Trigger>
-                        <li className="p-3 hover:bg-slate-400/20 rounded-2xl px-4 flex text-muted-foreground cursor-pointer gap-1 items-center">
+                        <li
+                            onClick={() => fileRef.current?.click()}
+                            className="text-muted-foreground flex cursor-pointer items-center gap-1 rounded-2xl p-3 px-4 hover:bg-slate-400/20"
+                        >
                             <Upload className="text-sm" strokeWidth={"1.4"} />
                             Upload a video
                         </li>
                     </ul>
                 </DropDown.Body>
             </DropDown>
-            {state && <LoopVideoEngine onClose={() => setState(false)} />}
+            {recordOpen && (
+                <LoopVideoEngine
+                    folderId={folderId}
+                    onClose={() => setRecordOpen(false)}
+                />
+            )}
         </div>
     );
 };
