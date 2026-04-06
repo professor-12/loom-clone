@@ -11,6 +11,9 @@ importers:
       '@ffmpeg/ffmpeg':
         specifier: ^0.12.15
         version: 0.12.15
+      '@google/generative-ai':
+        specifier: ^0.24.1
+        version: 0.24.1
       '@lottiefiles/dotlottie-react':
         specifier: ^0.17.3
         version: 0.17.3(react@19.1.0)
@@ -184,6 +187,10 @@ packages:
   '@ffmpeg/types@0.12.4':
     resolution: {integrity: sha512-k9vJQNBGTxE5AhYDtOYR5rO5fKsspbg51gbcwtbkw2lCdoIILzklulcjJfIDwrtn7XhDeF2M+THwJ2FGrLeV6A==}
     engines: {node: '>=16.x'}
+
+  '@google/generative-ai@0.24.1':
+    resolution: {integrity: sha512-MqO+MLfM6kjxcKoy0p1wRzG3b4ZZXtPI+z2IE26UogS2Cm/XHO+7gGRBh6gcJsOiIVoH93UwKvW4HdgiOZCy9Q==}
+    engines: {node: '>=18.0.0'}
 
   '@hexagon/base64@1.1.28':
     resolution: {integrity: sha512-lhqDEAvWixy3bZ+UOYbPwUbBkwBq5C1LAJ/xPC8Oi+lL54oyakv/npbA0aU2hgCsx/1NUd4IBvV03+aUBWxerw==}
@@ -2641,6 +2648,8 @@ snapshots:
       '@ffmpeg/types': 0.12.4
 
   '@ffmpeg/types@0.12.4': {}
+
+  '@google/generative-ai@0.24.1': {}
 
   '@hexagon/base64@1.1.28': {}
 

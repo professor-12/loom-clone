@@ -32,6 +32,7 @@ model User {
   billing Billing? 
 
   Folder Folder[]
+  shareLinks ShareLink[]
 }
 
 model AuthProvider {
@@ -95,6 +96,7 @@ model Video {
   workspace      Workspace?   @relation(fields: [workspaceId], references: [id])
   comments       Comment[]
   shares         VideoShare[]
+  shareLinks     ShareLink[]
   createdAt      DateTime     @default(now())
   updatedAt      DateTime     @updatedAt
 }
@@ -139,6 +141,48 @@ model VideoShare {
   userId    String? 
   video     Video    @relation(fields: [videoId], references: [id])
   createdAt DateTime @default(now())
+}
+
+model ShareLink {
+  id              String   @id @default(uuid())
+  videoId          String
+  createdByUserId  String
+  passwordHash     String?
+  expiresAt        DateTime?
+  revokedAt        DateTime?
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+
+  video            Video   @relation(fields: [videoId], references: [id])
+  createdBy        User    @relation(fields: [createdByUserId], references: [id])
+  accessRequests   ShareAccessRequest[]
+
+  @@index([videoId])
+  @@index([expiresAt])
+  @@index([revokedAt])
+  @@index([createdByUserId])
+  @@index([videoId, revokedAt])
+}
+
+enum ShareAccessRequestStatus {
+  PENDING
+  APPROVED
+  DENIED
+}
+
+model ShareAccessRequest {
+  id            String                   @id @default(uuid())
+  shareLinkId   String
+  requestEmail  String
+  status        ShareAccessRequestStatus @default(PENDING)
+  requestedAt   DateTime                 @default(now())
+  decidedAt     DateTime?
+
+  shareLink     ShareLink                @relation(fields: [shareLinkId], references: [id], onDelete: Cascade)
+
+  @@index([shareLinkId, status])
+  @@index([requestEmail])
+  @@unique([shareLinkId, requestEmail])
 }
 
 model Comment {

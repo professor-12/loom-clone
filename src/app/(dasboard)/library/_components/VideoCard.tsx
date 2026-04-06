@@ -11,6 +11,9 @@ import { RiLinkM } from "react-icons/ri";
 import { toast } from "sonner";
 import { deleteVideo } from "@/actions/video.actions";
 import MoveVideoMenu from "./MoveVideoMenu";
+import { getOrCreateShareLink } from "@/actions/share.actions";
+import ShareSettingsModal from "./ShareSettingsModal";
+import { Lock, LockOpen } from "lucide-react";
 
 type VideoCardProps = Video & {
     user: User;
@@ -31,12 +34,15 @@ export const VideoCard = (props: VideoCardProps) => {
         folder,
         user: { name, avatarUrl },
     } = props;
+
+    const isLocked =
+        visibility === "PRIVATE" || visibility === "WORKSPACE";
     return (
         <Link
             href={`/share/${id}`}
             className="overflow-hidden group cursor-pointer rounded-2xl transition-all duration-200 hover:ring-primary ring-transparent ring-2   border-border border"
         >
-            <div className="h-[14rem] z-12  bg-[#F8F8F8] relative">
+            <div className="h-[12rem] z-12  bg-[#F8F8F8] relative">
                 <div
                     onClick={(e) => {
                         e.preventDefault();
@@ -55,18 +61,28 @@ export const VideoCard = (props: VideoCardProps) => {
                     />
                     <div
                         onClick={async () => {
-                            copyToClipBoard(`${location.origin}/share/${id}`)
-                                .then((e) => {
-                                    toast.success("Link copied successfully");
-                                })
-                                .catch((e) => {
-                                    toast.error("Failed to copy text");
-                                });
+                            try {
+                                const res = await getOrCreateShareLink(id);
+                                if (res.error || !res.data) {
+                                    toast.error("Could not create share link");
+                                    return;
+                                }
+                                await copyToClipBoard(
+                                    `${location.origin}/s/${res.data.id}`
+                                );
+                                toast.success("Link copied successfully");
+                            } catch {
+                                toast.error("Failed to copy link");
+                            }
                         }}
                         className="cursor-pointer p-1 bg-white rounded-md"
                     >
                         <RiLinkM />
                     </div>
+                    <ShareSettingsModal
+                        videoId={id}
+                        triggerClassName="cursor-pointer p-1 bg-white rounded-md"
+                    />
                     <MoveVideoMenu
                         videoId={id}
                         currentFolderId={folderId ?? null}
@@ -83,7 +99,7 @@ export const VideoCard = (props: VideoCardProps) => {
                     loading="lazy"
                 />
             </div>
-            <div className="flex-1 p-4 flex flex-col">
+            <div className="relative flex-1 p-4 flex flex-col">
                 <div className="flex items-center gap-2">
                     <div className="size-8 flex-center font-bold bg-[#8D6E63] overflow-hidden rounded-full">
                         <Image
@@ -115,6 +131,18 @@ export const VideoCard = (props: VideoCardProps) => {
                         <FaRegSmile className="text-sm" />
                         <span className="text-sm">2</span>
                     </p>
+                </div>
+
+                <div
+                    className="absolute bottom-4 right-4 text-muted-foreground"
+                    aria-label={isLocked ? "Locked" : "Public"}
+                    title={isLocked ? "Locked" : "Public"}
+                >
+                    {isLocked ? (
+                        <Lock className="size-4" />
+                    ) : (
+                        <LockOpen className="size-4" />
+                    )}
                 </div>
             </div>
         </Link>

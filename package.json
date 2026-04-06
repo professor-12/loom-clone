@@ -10,6 +10,7 @@
   },
   "dependencies": {
     "@ffmpeg/ffmpeg": "^0.12.15",
+    "@google/generative-ai": "^0.24.1",
     "@lottiefiles/dotlottie-react": "^0.17.3",
     "@next/third-parties": "^16.0.0",
     "@prisma/client": "6.16.2",
