@@ -94,7 +94,10 @@ export const POST = async (req: NextRequest) => {
             duration?: number;
         };
 
-        const scheduleTranscription = Boolean(process.env.OPENAI_API_KEY);
+        const scheduleTranscription = Boolean(
+            process.env.GEMINI_API_KEY?.trim() ||
+                process.env.GOOGLE_GENERATIVE_AI_API_KEY?.trim()
+        );
 
         const video = await prisma.video.create({
             data: {

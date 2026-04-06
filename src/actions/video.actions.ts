@@ -3,7 +3,7 @@
 import { prisma } from "@/lib/utils";
 import { auth } from "./auth.actions";
 import { revalidatePath } from "next/cache";
-import type { Prisma } from "@prisma/client";
+import type { Prisma, Visibility } from "@prisma/client";
 
 interface Pagination {
     page?: number;
@@ -49,6 +49,23 @@ export const getVideo = async (id: string) => {
     });
 
     return { data: userVideo, error: null };
+};
+
+/** Poll-friendly payload for the video transcript UI (share page). */
+export const getVideoTranscriptSnapshot = async (videoId: string) => {
+    try {
+        const row = await prisma.video.findUnique({
+            where: { id: videoId },
+            select: {
+                transcriptStatus: true,
+                transcript: true,
+                transcriptError: true,
+            },
+        });
+        return { data: row, error: null as string | null };
+    } catch {
+        return { data: null, error: "Failed to load transcript" };
+    }
 };
 
 export const deleteVideo = async (id: string) => {
@@ -130,4 +147,31 @@ export const moveVideoToFolder = async (
         console.error(err);
         return { data: null, error: "Something went wrong", status: 500 };
     }
+};
+
+export const updateVideoVisibility = async (
+    videoId: string,
+    visibility: Visibility
+) => {
+    const { data } = await auth();
+    if (!data?.sub) {
+        return { error: "UNAUTHORIZED", data: null as any, status: 401 };
+    }
+
+    const video = await prisma.video.findFirst({
+        where: { id: videoId, userId: data.sub },
+        select: { id: true },
+    });
+    if (!video) {
+        return { error: "NOT_FOUND", data: null as any, status: 404 };
+    }
+
+    await prisma.video.update({
+        where: { id: videoId },
+        data: { visibility },
+        select: { id: true },
+    });
+
+    revalidatePath("/library", "layout");
+    return { error: null, data: { id: videoId }, status: 200 };
 };
