@@ -59,7 +59,18 @@ export default async function SmartSharePage({ params }: Props) {
         );
     }
 
-    const data = res.data;
+    const data = res.status === "OK" ? res.data : null;
+
+    if (res.status === "UNAUTHORIZED") {
+        return (
+            <div className="p-10">
+                <h1 className="text-xl font-semibold">Unauthorized</h1>
+                <p className="text-muted-foreground mt-2">
+                    You are not authorized to access this share link.
+                </p>
+            </div>
+        );
+    }
 
     if (!data) {
         return (
