@@ -1,11 +1,14 @@
 import { getVideos } from "@/actions/video.actions";
 import { Button } from "@/components/ui/button";
-import { Video as _Video } from "@prisma/client";
 import { Suspense } from "react";
 import VideoSkeletons from "./VideoSkeletons";
 import { VideoCard } from "./VideoCard";
 
-const Video = async () => {
+type VideoProps = {
+    folderId?: string | null;
+};
+
+const Video = async ({ folderId = null }: VideoProps) => {
     return (
         <div className="pb-12">
             {/* <Folders /> */}
@@ -27,7 +30,7 @@ const Video = async () => {
                 </div>
             </div>
             <Suspense fallback={<VideoSkeletons />}>
-                <VideoContainer></VideoContainer>
+                <VideoContainer folderId={folderId} />
             </Suspense>
         </div>
     );
@@ -35,8 +38,14 @@ const Video = async () => {
 
 export default Video;
 
-export const VideoContainer = async () => {
-    const { data } = await getVideos({ limit: 100, page: 1 });
+export const VideoContainer = async ({
+    folderId = null,
+}: VideoProps) => {
+    const { data } = await getVideos({
+        limit: 100,
+        page: 1,
+        ...(folderId ? { folderId } : {}),
+    });
     if (data?.length == 0) {
         return (
             <div className="flex-center flex-col font-bold gap-3">
